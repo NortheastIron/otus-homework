@@ -1,0 +1,1 @@
+export { ToDoItemComponent } from './to-do.item.component';
