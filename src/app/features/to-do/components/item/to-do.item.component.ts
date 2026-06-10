@@ -14,7 +14,7 @@ export class ToDoItemComponent {
     public data: InputSignal<Task> = input.required();
     public itemEvent: OutputEmitterRef<TaskEvent> = output();
 
-    protected onRemove() {
+    protected onRemove(): void {
         this.itemEvent.emit({
             type: AppEvents.REMOVE,
             id: this.data().id

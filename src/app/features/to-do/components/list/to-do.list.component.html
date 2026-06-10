@@ -1,20 +1,23 @@
 <section class="app-to-do-list">
     <h1>Todo List</h1>
 
-    <ul class="app-to-do-list__list">
-        @for (item of tasks(); track $index) {
-            <li class="app-to-do-list__list__item">
-                <app-to-do-item [data]="item" (itemEvent)="onHandlerItemEvent($event)"></app-to-do-item>
-            </li>
-        }
-    </ul>
-
-    @if (!tasks().length) {
-        <h2>Пусто</h2>
+    @if (tasks().length) {
+        <ul class="app-to-do-list__list">
+            @for (item of tasks(); track $index) {
+                <li class="app-to-do-list__list__item">
+                    <app-to-do-item [data]="item" (itemEvent)="onHandlerItemEvent($event)"></app-to-do-item>
+                </li>
+            }
+        </ul>
     }
+    
+
+    <!-- @if (!tasks().length) {
+        <h2>Пусто</h2>
+    } -->
 
     <div class="app-to-do-list__actions">
-        <input type="text" placeholder="Add your new todo" [(ngModel)]="taskName">
-        <button [disabled]="taskName.length === 0" (click)="onAddTask()">Add task</button>
+        <input type="text" placeholder="Add your new todo" [(ngModel)]="taskText">
+        <button [disabled]="taskText.length === 0" (click)="onAddTask()">Add task</button>
     </div>
 </section>
