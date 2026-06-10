@@ -1,0 +1,21 @@
+.app-to-do-item {
+    padding: 0 15px;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+    background-color: #F2F2F2;
+
+    &__text {
+        padding: 5px;
+        font-weight: 600;
+        word-break: break-all;
+    }
+    
+    &__delete {
+        padding: 5px;
+        background-color: inherit;
+        border: 1px solid #000;
+        cursor: pointer;
+    }
+}
