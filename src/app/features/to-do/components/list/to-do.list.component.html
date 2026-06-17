@@ -17,7 +17,10 @@
     } -->
 
     <div class="app-to-do-list__actions">
-        <input type="text" placeholder="Add your new todo" [(ngModel)]="taskText">
-        <button [disabled]="taskText.length === 0" (click)="onAddTask()">Add task</button>
+        <mat-form-field>
+            <mat-label>Add your new todo</mat-label>
+            <input matInput type="text" placeholder="Enter text..." [(ngModel)]="taskText">
+        </mat-form-field>
+        <button class="button button--add" [disabled]="taskText.length === 0" (click)="onAddTask()">Add task</button>
     </div>
 </section>

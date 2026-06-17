@@ -1,5 +1,8 @@
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+
 import { AppEvents } from '@core';
 
 import { ToDoItemComponent } from '@features';
@@ -9,17 +12,31 @@ import { Task, TaskEvent } from '@features/to-do/types';
     selector: 'app-to-do-list',
     imports: [
         FormsModule,
-        ToDoItemComponent
+        ToDoItemComponent,
+        MatFormFieldModule,
+        MatInputModule
     ],
     templateUrl: './to-do.list.component.html',
-    styleUrl: './to-do.list.component.scss',
+    styleUrl: './to-do.list.component.scss'
 })
 export class ToDoListComponent {
-    protected tasks: WritableSignal<Task[]> = signal([]);
+    protected tasks: WritableSignal<Task[]> = signal([
+        {
+            // id: 'o-1-n-e', //c1
+            id: 1,
+            text: 'One'
+        }
+    ]);
     protected taskText: string = '';
 
     protected onAddTask(): void {
-        this.tasks.update((items: Task[]) => [...items, {id: crypto.randomUUID(), text: this.taskText}]);
+        let maxId: number = 1;
+
+        this.tasks().forEach(item => {
+            maxId = Math.max(item.id + 1, maxId);
+        });
+        // this.tasks.update((items: Task[]) => [...items, {id: crypto.randomUUID(), text: this.taskText}]); //c1
+        this.tasks.update((items: Task[]) => [...items, {id: maxId, text: this.taskText}]);
         this.taskText = '';
     }
 
@@ -30,3 +47,7 @@ export class ToDoListComponent {
         }
     }
 }
+
+/*
+//c1 - судя по заданию id это число ..  пока что закомитил randomUUID мб в будущем вернусь к этому решению
+*/
