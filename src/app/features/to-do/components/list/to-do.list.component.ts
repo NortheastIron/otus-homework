@@ -3,10 +3,8 @@ import { FormsModule } from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 
-import { AppEvents } from '@core';
-
 import { ToDoItemComponent } from '@features';
-import { Task, TaskEvent } from '@features/to-do/types';
+import { Task } from '@features/to-do/types';
 
 @Component({
     selector: 'app-to-do-list',
@@ -22,7 +20,6 @@ import { Task, TaskEvent } from '@features/to-do/types';
 export class ToDoListComponent {
     protected tasks: WritableSignal<Task[]> = signal([
         {
-            // id: 'o-1-n-e', //c1
             id: 1,
             text: 'One'
         }
@@ -30,24 +27,13 @@ export class ToDoListComponent {
     protected taskText: string = '';
 
     protected onAddTask(): void {
-        let maxId: number = 1;
+        const maxId: number = Math.max(1, ...this.tasks().map(item => item.id + 1));
 
-        this.tasks().forEach(item => {
-            maxId = Math.max(item.id + 1, maxId);
-        });
-        // this.tasks.update((items: Task[]) => [...items, {id: crypto.randomUUID(), text: this.taskText}]); //c1
         this.tasks.update((items: Task[]) => [...items, {id: maxId, text: this.taskText}]);
         this.taskText = '';
     }
 
-    protected onHandlerItemEvent(event: TaskEvent): void {
-        if (event.type === AppEvents.REMOVE) {
-            const tasks = this.tasks().filter(item => item.id !== event.id);
-            this.tasks.update(_items => tasks);
-        }
+    protected onHandlerItemDeleteEvent(id: number): void {
+        this.tasks.update(items => items.filter(item => item.id !== id));
     }
 }
-
-/*
-//c1 - судя по заданию id это число ..  пока что закомитил randomUUID мб в будущем вернусь к этому решению
-*/

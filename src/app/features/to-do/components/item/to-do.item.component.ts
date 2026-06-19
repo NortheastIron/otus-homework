@@ -1,8 +1,6 @@
 import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 
-import { AppEvents } from '@core';
-
-import { Task, TaskEvent } from '@features/to-do/types';
+import { Task } from '@features/to-do/types';
 
 @Component({
     selector: 'app-to-do-item',
@@ -12,12 +10,9 @@ import { Task, TaskEvent } from '@features/to-do/types';
 })
 export class ToDoItemComponent {
     public data: InputSignal<Task> = input.required();
-    public itemEvent: OutputEmitterRef<TaskEvent> = output();
+    public itemDeleteEvent: OutputEmitterRef<number> = output();
 
     protected onRemove(): void {
-        this.itemEvent.emit({
-            type: AppEvents.REMOVE,
-            id: this.data().id
-        });
+        this.itemDeleteEvent.emit(this.data().id);
     }
 }
