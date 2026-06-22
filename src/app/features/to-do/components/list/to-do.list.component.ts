@@ -29,7 +29,7 @@ export class ToDoListComponent {
     protected onAddTask(): void {
         const maxId: number = Math.max(1, ...this.tasks().map(item => item.id + 1));
 
-        this.tasks.update((items: Task[]) => [...items, {id: maxId, text: this.taskText}]);
+        this.tasks.update((items: Task[]) => [...items, {id: maxId, text: this.taskText.trim()}]);
         this.taskText = '';
     }
 
