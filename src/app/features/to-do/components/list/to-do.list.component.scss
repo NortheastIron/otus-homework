@@ -19,22 +19,14 @@
         justify-content: space-between;
         gap: 20px;
 
-        input {
-            height: 32px;
-            padding: 0 5px;
-            flex: 1 1 auto;
-            border: 1px solid rgb(194, 188, 181);
-            border-radius: 5px;
-            outline: none;
+        --mat-form-field-container-height: 56px;
+
+        .button--add {
+            height: var(--mat-form-field-container-height);
         }
 
-        button {
-            padding: 5px;
-            border: none;
-            border-radius: 5px;
-            background-color: #B694EB;
-            color: #FFF;
-            cursor: pointer;
+        .my-custom-form-field {
+            flex: 1 1 auto;
         }
     }
 }

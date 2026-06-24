@@ -1,32 +1,39 @@
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AppEvents } from '@core';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 
 import { ToDoItemComponent } from '@features';
-import { Task, TaskEvent } from '@features/to-do/types';
+import { Task } from '@features/to-do/types';
 
 @Component({
     selector: 'app-to-do-list',
     imports: [
         FormsModule,
-        ToDoItemComponent
+        ToDoItemComponent,
+        MatFormFieldModule,
+        MatInputModule
     ],
     templateUrl: './to-do.list.component.html',
-    styleUrl: './to-do.list.component.scss',
+    styleUrl: './to-do.list.component.scss'
 })
 export class ToDoListComponent {
-    protected tasks: WritableSignal<Task[]> = signal([]);
+    protected tasks: WritableSignal<Task[]> = signal([
+        {
+            id: 1,
+            text: 'One'
+        }
+    ]);
     protected taskText: string = '';
 
     protected onAddTask(): void {
-        this.tasks.update((items: Task[]) => [...items, {id: crypto.randomUUID(), text: this.taskText}]);
+        const maxId: number = Math.max(1, ...this.tasks().map(item => item.id + 1));
+
+        this.tasks.update((items: Task[]) => [...items, {id: maxId, text: this.taskText.trim()}]);
         this.taskText = '';
     }
 
-    protected onHandlerItemEvent(event: TaskEvent): void {
-        if (event.type === AppEvents.REMOVE) {
-            const tasks = this.tasks().filter(item => item.id !== event.id);
-            this.tasks.update(_items => tasks);
-        }
+    protected onHandlerItemDelete(id: number): void {
+        this.tasks.update(items => items.filter(item => item.id !== id));
     }
 }
