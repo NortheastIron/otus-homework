@@ -1,3 +1,3 @@
 export const AppEvents = {
-    REMOVE: 'REMOVE'
+    REMOVE: 'REMOVE',
 } as const;
