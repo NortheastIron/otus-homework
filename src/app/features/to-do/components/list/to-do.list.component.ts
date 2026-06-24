@@ -33,7 +33,7 @@ export class ToDoListComponent {
         this.taskText = '';
     }
 
-    protected onHandlerItemDeleteEvent(id: number): void {
+    protected onHandlerItemDelete(id: number): void {
         this.tasks.update(items => items.filter(item => item.id !== id));
     }
 }

@@ -5,7 +5,7 @@
         <ul class="app-to-do-list__list">
             @for (item of tasks(); track item.id) {
                 <li class="app-to-do-list__list__item">
-                    <app-to-do-item [data]="item" (itemDeleteEvent)="onHandlerItemDeleteEvent($event)"></app-to-do-item>
+                    <app-to-do-item [data]="item" (itemDelete)="onHandlerItemDelete($event)"></app-to-do-item>
                 </li>
             }
         </ul>
