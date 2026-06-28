@@ -22,6 +22,6 @@
             <mat-label>Add your new todo</mat-label>
             <input name="taskText" matInput type="text" placeholder="Enter text..." [(ngModel)]="taskText">
         </mat-form-field>
-        <button [title]="'Add task'" class="button--add" [disabled]="!taskText.trim()" (click)="onAddTask()"></button>
+        <button app-button-title="Add task" class="button--add" [disabled]="!taskText.trim()" (click)="onAddTask()"></button>
     </div>
 </section>
