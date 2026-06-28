@@ -1,7 +1,7 @@
 <section class="app-to-do-list">
     <h1>Todo List</h1>
 
-    <div class="app-to-do-list__list" [class]="{'empty-loader': isLoading() || !tasks().length}">
+    <div class="app-to-do-list__list" [class.empty-loader]="isEmptyOrLoading()">
         @if (isLoading()) {
             <span class="app-to-do-list__list__loader"></span>
         } @else if (tasks().length) {

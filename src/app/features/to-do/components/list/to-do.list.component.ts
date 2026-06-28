@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, computed, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -29,6 +29,7 @@ export class ToDoListComponent implements OnInit {
     ]);
     protected taskText: string = '';
     protected isLoading: WritableSignal<boolean> = signal(true);
+    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.tasks().length);
 
     ngOnInit(): void {
         setTimeout(() => {
