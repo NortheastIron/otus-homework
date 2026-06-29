@@ -7,10 +7,10 @@ export const routes: Routes = [
         path: '',
         component: ToDoListComponent,
         title: 'ToDoList',
-        pathMatch: 'full'
+        pathMatch: 'full',
     },
     {
         path: '**',
         redirectTo: '',
-    }
+    },
 ];

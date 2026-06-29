@@ -1,21 +1,27 @@
 <section class="app-to-do-list">
     <h1>Todo List</h1>
 
-    @if (tasks().length) {
-        <ul class="app-to-do-list__list">
-            @for (item of tasks(); track item.id) {
-                <li class="app-to-do-list__list__item">
-                    <app-to-do-item [data]="item" (itemDelete)="onHandlerItemDelete($event)"></app-to-do-item>
-                </li>
-            }
-        </ul>
-    }
+    <div class="app-to-do-list__list" [class.empty-loader]="isEmptyOrLoading()">
+        @if (isLoading()) {
+            <span class="app-to-do-list__list__loader"></span>
+        } @else if (tasks().length) {
+            <ul class="app-to-do-list__list__items">
+                @for (item of tasks(); track item.id) {
+                    <li>
+                        <app-to-do-item [data]="item" (itemDelete)="onHandlerItemDelete($event)"></app-to-do-item>
+                    </li>
+                }
+            </ul>
+        } @else {
+            <p>Список пуст. Добавьте задачу</p>
+        }
+    </div>
 
     <div class="app-to-do-list__actions">
         <mat-form-field class="my-custom-form-field">
             <mat-label>Add your new todo</mat-label>
             <input name="taskText" matInput type="text" placeholder="Enter text..." [(ngModel)]="taskText">
         </mat-form-field>
-        <button class="button button--add" [disabled]="!taskText.trim()" (click)="onAddTask()">Add task</button>
+        <button app-button-title="Add task" class="button--add" [disabled]="!taskText.trim()" (click)="onAddTask()"></button>
     </div>
 </section>
