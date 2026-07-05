@@ -1,0 +1,14 @@
+:host(.app-icon-button) {
+    height: 30px;
+    width: 30px;
+    border: 1px solid #c1c1c1;
+    border-radius: 50%;
+    background-color: inherit;
+    color: #000;
+    cursor: pointer;
+    font-size: 14px;
+
+    &:hover {
+        background-color: #e2e2e2;
+    }
+}

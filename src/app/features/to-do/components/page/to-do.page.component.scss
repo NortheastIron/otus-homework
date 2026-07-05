@@ -1,0 +1,110 @@
+.app-to-do-page {
+    display: flex;
+    gap: 20px;
+}
+
+.app-to-do-list {
+    width: 400px;
+    padding: 20px;
+    display: flex;
+    flex-flow: column;
+    gap: 20px;
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+
+    &__cont {
+        height: 300px;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+        margin-right: -16px;
+        position: relative;
+
+        &_empty-loader {
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    &__items {
+        list-style-type: none;
+        display: flex;
+        flex-flow: column;
+        gap: 5px;
+    }
+
+    &__form {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+
+        --mat-form-field-container-height: 56px;
+
+        .app-to-do-list__fields {
+            flex: 1 1 auto;
+        }
+
+        .app-button_add {
+            height: var(--mat-form-field-container-height);
+        }
+    }
+
+    &__fields {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.app-to-do-details {
+    width: 400px;
+    height: 200px;
+    padding: 20px;
+    display: flex;
+    flex-flow: column;
+    gap: 20px;
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+
+        .app-icon-button {
+            flex-shrink: 0;
+        }
+    }
+
+    &__title {
+        line-height: 32px;
+        min-height: 32px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    &__description {
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+        margin-right: -16px;
+    }
+}
+
+.app-loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #2450af;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    animation: rotation 1s linear infinite;
+
+    @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}

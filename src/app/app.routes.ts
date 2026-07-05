@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 
-import { ToDoListComponent } from '@features';
+import { ToDoPageComponent } from '@features';
 
 export const routes: Routes = [
     {
         path: '',
-        component: ToDoListComponent,
-        title: 'ToDoList',
+        component: ToDoPageComponent,
+        title: 'ToDoApp',
         pathMatch: 'full',
     },
     {

@@ -1,21 +1,21 @@
-:host {
+:host(.app-button) {
     padding: 5px;
     border: none;
     border-radius: 5px;
     background-color: #b694eb;
     color: #fff;
     cursor: pointer;
+}
 
-    &.button--add {
-        background-color: rgb(100, 163, 100);
-    }
+:host(.app-button_add) {
+    background-color: rgb(100, 163, 100);
+}
 
-    &.button--delete {
-        background-color: rgb(202, 69, 69);
-    }
+:host(.app-button_delete) {
+    background-color: rgb(202, 69, 69);
+}
 
-    &:disabled {
-        opacity: 0.5;
-        cursor: default;
-    }
+:host(.app-button_disabled) {
+    opacity: 0.5;
+    cursor: default;
 }
