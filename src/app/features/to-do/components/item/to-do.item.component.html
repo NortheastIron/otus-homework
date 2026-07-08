@@ -1,4 +1,4 @@
-<div class="app-to-do-item" [class.app-to-do-item_selected]="isSelected()" app-tooltip="Кликните для подробностей">
+<div class="app-to-do-item" [class.app-to-do-item_selected]="isSelected()" appTooltip="Кликните для подробностей">
     <span class="app-to-do-item__text">{{data().text}}</span>
-    <button app-button-title="Delete" class="app-button app-button_delete" (click)="onRemove($event)" app-tooltip="Удалить задачу">Delete</button>
+    <button app-button-title="Delete" class="app-button app-button_delete" (click)="onRemove($event)" appTooltip="Удалить задачу">Delete</button>
 </div>

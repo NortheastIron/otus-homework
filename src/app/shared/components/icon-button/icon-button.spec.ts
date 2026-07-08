@@ -1,22 +1,37 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component } from '@angular/core';
 
 import { IconButtonComponent } from './icon-button.component';
 
+
+@Component({
+    template: `<button app-icon-button-class="icon-cancel">X</button>`,
+    imports: [IconButtonComponent],
+})
+class TestComponent {}
+
 describe('IconButton', () => {
-  let component: IconButtonComponent;
-  let fixture: ComponentFixture<IconButtonComponent>;
+    let hostComponent: TestComponent;
+    let hostFixture: ComponentFixture<TestComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [IconButtonComponent],
-    }).compileComponents();
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [TestComponent, IconButtonComponent],
+        }).compileComponents();
 
-    fixture = TestBed.createComponent(IconButtonComponent);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
+        hostFixture = TestBed.createComponent(TestComponent);
+        hostComponent = hostFixture.componentInstance;
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+        hostFixture.detectChanges();
+    });
+
+    it('should create TestComponent', () => {
+        expect(hostComponent).toBeTruthy();
+    });
+
+    it('should render icon with class', () => {
+        const iconElement = hostFixture.nativeElement.querySelector('i');
+        expect(iconElement).toBeTruthy();
+        expect(iconElement.classList).toContain('icon-cancel');
+    });
 });

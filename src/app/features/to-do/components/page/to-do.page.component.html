@@ -25,7 +25,7 @@
         <form [formGroup]="form" (ngSubmit)="onSubmitToDoForm()" class="app-to-do-list__form">
             <div class="app-to-do-list__fields">
                 <mat-form-field class="app-to-do-list__field">
-                    <mat-label>Add your new todo</mat-label>
+                    <mat-label>Todo name</mat-label>
                     <input name="taskText"
                         matInput
                         type="text"
@@ -34,7 +34,7 @@
                         [errorStateMatcher]="unusedFormControlMatcher"> 
                 </mat-form-field>
                 <mat-form-field class="app-to-do-list__field">
-                    <mat-label>Add your new todo</mat-label>
+                    <mat-label>Leave a description</mat-label>
                     <input name="taskText" matInput type="text" placeholder="Enter text..." [formControl]="form.controls.taskDescription">
                 </mat-form-field>
             </div>
@@ -42,7 +42,7 @@
                     class="app-button app-button_add"
                     [class.app-button_disabled]="form.invalid"
                     [disabled]="form.invalid"
-                    app-tooltip="Добавить задачу">Add task!
+                    appTooltip="Добавить задачу">Add task!
             </button>
         </form>
     </section>
@@ -51,7 +51,7 @@
         <section class="app-to-do-details">
             <div class="app-to-do-details__header">
                 <h2 class="app-to-do-details__title">{{this.selectedItem()?.text}} </h2>
-                <button app-icon-button-class="icon-cancel" class="app-icon-button" (click)="onCloseDetails()" app-tooltip="Закрыть">X</button>
+                <button app-icon-button-class="icon-cancel" class="app-icon-button" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
             </div>
             
             <div class="app-to-do-details__description">{{this.selectedItem()?.description}}</div>

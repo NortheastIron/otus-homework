@@ -3,7 +3,7 @@ import { Directive, effect, ElementRef, inject, input, InputSignal, OnDestroy, R
 import { TooltipService } from '@shared/services';
 
 @Directive({
-    selector: '[app-tooltip]',
+    selector: '[appTooltip]',
     host: {
         '(mouseenter)': 'show($event)',
         '(mouseleave)': 'hide()',
@@ -12,7 +12,7 @@ import { TooltipService } from '@shared/services';
     },
 })
 export class TooltipDirective implements OnDestroy {
-    public appTooltip: InputSignal<string> = input('', {alias: 'app-tooltip'});
+    public appTooltip: InputSignal<string> = input('');
 
     private readonly el: ElementRef<HTMLElement> = inject(ElementRef);
     private readonly renderer: Renderer2 = inject(Renderer2);
