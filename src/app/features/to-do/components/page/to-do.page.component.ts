@@ -3,8 +3,6 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { UnusedFormControlMatcher } from '@core';
-
 import { ButtonComponent, IconButtonComponent, TooltipDirective } from '@shared';
 
 import { ToDoItemComponent } from '@features/to-do/components/item';
@@ -40,12 +38,9 @@ export class ToDoPageComponent implements OnInit {
             description: 'First task',
         },
     ]);
-    protected taskText: string = '';
     protected isLoading: WritableSignal<boolean> = signal(true);
     protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.tasks().length);
-    protected unusedFormControlMatcher = new UnusedFormControlMatcher();
     protected selectedItemId: WritableSignal<number | null> = signal(null); 
-    protected isShowDetails: Signal<boolean> = computed(() => !!this.selectedItemId());
     protected selectedItem: Signal<Task | null> = computed(() => this.tasks().find(item => item.id === this.selectedItemId()) || null);
     protected form: FormGroup<ToDoForm> = this.fb.group({
         taskName: ['', [Validators.required, this.noWhitespaceValidator]],

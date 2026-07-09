@@ -26,21 +26,19 @@
             <div class="app-to-do-list__fields">
                 <mat-form-field class="app-to-do-list__field">
                     <mat-label>Todo name</mat-label>
-                    <input name="taskText"
+                    <input name="taskName"
                         matInput
                         type="text"
                         placeholder="Enter text..."
-                        [formControl]="form.controls.taskName"
-                        [errorStateMatcher]="unusedFormControlMatcher"> 
+                        [formControl]="form.controls.taskName"> 
                 </mat-form-field>
                 <mat-form-field class="app-to-do-list__field">
                     <mat-label>Leave a description</mat-label>
-                    <input name="taskText" matInput type="text" placeholder="Enter text..." [formControl]="form.controls.taskDescription">
+                    <input name="taskDescription" matInput type="text" placeholder="Enter text..." [formControl]="form.controls.taskDescription">
                 </mat-form-field>
             </div>
             <button app-button-title="Add task"
-                    class="app-button app-button_add"
-                    [class.app-button_disabled]="form.invalid"
+                    app-button-type="ADD"
                     [disabled]="form.invalid"
                     appTooltip="Добавить задачу">Add task!
             </button>
@@ -50,8 +48,8 @@
     @if (selectedItemId()) {
         <section class="app-to-do-details">
             <div class="app-to-do-details__header">
-                <h2 class="app-to-do-details__title">{{this.selectedItem()?.text}} </h2>
-                <button app-icon-button-class="icon-cancel" class="app-icon-button" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
+                <h2 class="app-to-do-details__title">{{this.selectedItem()?.text}}</h2>
+                <button app-icon-button-class="CANCEL" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
             </div>
             
             <div class="app-to-do-details__description">{{this.selectedItem()?.description}}</div>

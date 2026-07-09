@@ -12,3 +12,15 @@
         background-color: #e2e2e2;
     }
 }
+
+.app-icon-button__icon {
+    &_cancel {
+        &:before {
+            content: 'x';
+            font-size: 16px;
+            font-weight: 400;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+        }
+    }
+}

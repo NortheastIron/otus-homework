@@ -5,6 +5,11 @@
     background-color: #b694eb;
     color: #fff;
     cursor: pointer;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
 }
 
 :host(.app-button_add) {
@@ -13,9 +18,4 @@
 
 :host(.app-button_delete) {
     background-color: rgb(202, 69, 69);
-}
-
-:host(.app-button_disabled) {
-    opacity: 0.5;
-    cursor: default;
 }
