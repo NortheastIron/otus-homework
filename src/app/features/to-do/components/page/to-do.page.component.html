@@ -1,0 +1,59 @@
+<article class="app-to-do-page">
+    <section class="app-to-do-list">
+        <h1>Todo List</h1>
+
+        <div class="app-to-do-list__cont" [class.app-to-do-list__cont_empty-loader]="isEmptyOrLoading()">
+            @if (isLoading()) {
+                <span class="app-loader"></span>
+            } @else if (tasks().length) {
+                <ul class="app-to-do-list__items">
+                    @for (item of tasks(); track item.id) {
+                        <li>
+                            <app-to-do-item [data]="item"
+                                            [isSelected]="selectedItemId() === item.id"
+                                            (itemSelect)="onHandlerItemSelected($event)"
+                                            (itemDelete)="onHandlerItemDelete($event)">
+                            </app-to-do-item>
+                        </li>
+                    }
+                </ul>
+            } @else {
+                <p>Список пуст. Добавьте задачу</p>
+            }
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmitToDoForm()" class="app-to-do-list__form">
+            <div class="app-to-do-list__fields">
+                <mat-form-field class="app-to-do-list__field">
+                    <mat-label>Todo name</mat-label>
+                    <input name="taskName"
+                        matInput
+                        type="text"
+                        placeholder="Enter text..."
+                        [formControl]="form.controls.taskName"> 
+                </mat-form-field>
+                <mat-form-field class="app-to-do-list__field">
+                    <mat-label>Leave a description</mat-label>
+                    <input name="taskDescription" matInput type="text" placeholder="Enter text..." [formControl]="form.controls.taskDescription">
+                </mat-form-field>
+            </div>
+            <button app-button-title="Add task"
+                    appButtonType="ADD"
+                    [disabled]="form.invalid"
+                    appTooltip="Добавить задачу">Add task!
+            </button>
+        </form>
+    </section>
+
+    @if (selectedItemId()) {
+        <section class="app-to-do-details">
+            <div class="app-to-do-details__header">
+                <h2 class="app-to-do-details__title">{{this.selectedItem()?.text}}</h2>
+                <button app-icon-button-class="CANCEL" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
+            </div>
+            
+            <div class="app-to-do-details__description">{{this.selectedItem()?.description}}</div>
+        </section>
+    }
+
+</article>

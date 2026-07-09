@@ -1,0 +1,26 @@
+:host(.app-icon-button) {
+    height: 30px;
+    width: 30px;
+    border: 1px solid #c1c1c1;
+    border-radius: 50%;
+    background-color: inherit;
+    color: #000;
+    cursor: pointer;
+    font-size: 14px;
+
+    &:hover {
+        background-color: #e2e2e2;
+    }
+}
+
+.app-icon-button__icon {
+    &_cancel {
+        &:before {
+            content: 'x';
+            font-size: 16px;
+            font-weight: 400;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+        }
+    }
+}

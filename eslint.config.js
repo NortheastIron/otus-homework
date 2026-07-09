@@ -26,15 +26,18 @@ module.exports = defineConfig([
       '@angular-eslint/component-selector': [
         'error',
         {
-          type: 'element',
+          type: ['element', 'attribute'],
           prefix: 'app',
           style: 'kebab-case',
         },
       ],
+
       'comma-dangle': [
         2,
         'always-multiline'
       ],
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+      '@typescript-eslint/no-inferrable-types': 'off'
     },
   },
   {
