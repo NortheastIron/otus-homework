@@ -14,14 +14,14 @@ type TypesButtonType = typeof TYPES_BUTTON[keyof typeof TYPES_BUTTON];
     host: {
         class: 'app-button',
         '[class]': 'this.typeButtonClass()',
-    }
+    },
 })
 export class ButtonComponent {
     public title: InputSignal<string> = input.required({ alias: 'app-button-title' });
-    public typeButton: InputSignal<TypesButtonType | null> = input<TypesButtonType | null>(null, { alias: 'app-button-type' });
+    public appButtonType: InputSignal<TypesButtonType | null> = input<TypesButtonType | null>(null);
 
     protected typeButtonClass: Signal<string> = computed(() => {
-        switch(this.typeButton()) {
+        switch(this.appButtonType()) {
             case TYPES_BUTTON.ADD:
                 return 'app-button_add';
             case TYPES_BUTTON.DELETE:
