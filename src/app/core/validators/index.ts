@@ -1,0 +1,1 @@
+export { noWhitespaceValidator } from './no-white-space.validator';

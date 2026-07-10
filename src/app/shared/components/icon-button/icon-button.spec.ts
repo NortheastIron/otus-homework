@@ -5,7 +5,7 @@ import { IconButtonComponent } from './icon-button.component';
 
 
 @Component({
-    template: `<button app-icon-button-class="icon-cancel">X</button>`,
+    template: `<button app-icon-button-class="CANCEL">X</button>`,
     imports: [IconButtonComponent],
 })
 class TestComponent {}
@@ -32,6 +32,6 @@ describe('IconButton', () => {
     it('should render icon with class', () => {
         const iconElement = hostFixture.nativeElement.querySelector('i');
         expect(iconElement).toBeTruthy();
-        expect(iconElement.classList).toContain('icon-cancel');
+        expect(iconElement.classList).toContain('app-icon-button__icon_cancel');
     });
 });

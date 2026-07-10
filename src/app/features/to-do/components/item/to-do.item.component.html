@@ -1,4 +1,16 @@
 <div class="app-to-do-item" [class.app-to-do-item_selected]="isSelected()" appTooltip="Кликните для подробностей">
-    <span class="app-to-do-item__text">{{data().text}}</span>
-    <button app-button-title="Delete" appButtonType="DELETE" (click)="onRemove($event)" appTooltip="Удалить задачу">Delete</button>
+    @if (isEdited()) {
+        <mat-form-field class="app-to-do-item__field">
+            <mat-label>Todo name</mat-label>
+            <input name="taskName"
+                   matInput
+                   type="text"
+                   placeholder="Enter text..."
+                   [errorStateMatcher]="defaultMatcher"
+                   [formControl]="taskNameControl"> 
+        </mat-form-field>
+    } @else {
+        <span class="app-to-do-item__text">{{data().text}}</span>
+    }
+    <button app-button-title="Delete" [appButtonType]="typesButton.DELETE" (click)="onRemove($event)" appTooltip="Удалить задачу">Delete</button>
 </div>

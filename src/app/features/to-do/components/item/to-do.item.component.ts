@@ -1,16 +1,27 @@
-import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
+import { Component, input, InputSignal, output, OutputEmitterRef, signal, WritableSignal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+import { noWhitespaceValidator } from '@core';
+
+import { ButtonComponent, TooltipDirective, TYPES_BUTTON } from '@shared';
 
 import { Task } from '@features/to-do/types';
-import { ButtonComponent, TooltipDirective } from '@shared';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 @Component({
     selector: 'app-to-do-item',
     imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
         ButtonComponent,
         TooltipDirective,
     ],
     host: {
         '(click)': 'onItemClick()',
+        '(dblclick)': 'onItemDblClick()',
     },
     templateUrl: './to-do.item.component.html',
     styleUrl: './to-do.item.component.scss',
@@ -22,12 +33,39 @@ export class ToDoItemComponent {
     public itemDelete: OutputEmitterRef<number> = output();
     public itemSelect: OutputEmitterRef<number> = output();
 
+    protected typesButton = TYPES_BUTTON;
+    protected isEdited: WritableSignal<boolean> = signal(false);
+
+    protected taskNameControl = new FormControl('', [noWhitespaceValidator]);
+    protected defaultMatcher = new ErrorStateMatcher();
+
+    private isSingleClickAllowed: boolean = false;
+    private clickTimer: number | undefined;
+
     protected onRemove($event: PointerEvent): void {
         $event.stopPropagation();
         this.itemDelete.emit(this.data().id);
     }
 
     protected onItemClick(): void {
-        this.itemSelect.emit(this.data().id);
+        if (this.isEdited()) {
+            return;
+        }
+
+        this.isSingleClickAllowed = true;
+
+        this.clickTimer = setTimeout(() => {
+            if (this.isSingleClickAllowed) {
+                this.itemSelect.emit(this.data().id);
+            }
+        }, 200);
+    }
+
+    protected onItemDblClick(): void {
+        this.isSingleClickAllowed = false;
+        clearTimeout(this.clickTimer);
+
+        this.taskNameControl.setValue(this.data().text);
+        this.isEdited.set(true);
     }
 }
