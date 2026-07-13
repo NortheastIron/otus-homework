@@ -32,15 +32,15 @@ describe('ToDoService', () => {
         service.updateTask({
             id: 1,
             text: 'FirstNew',
-            description: 'DescriptionNew'
+            description: 'DescriptionNew',
         });
 
         expect(service.tasks()).toEqual([
             {
                 id: 1,
                 text: 'FirstNew',
-                description: 'DescriptionNew'
-            }
+                description: 'DescriptionNew',
+            },
         ]);
     });
 });

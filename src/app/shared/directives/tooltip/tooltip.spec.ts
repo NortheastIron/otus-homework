@@ -1,4 +1,4 @@
-import { TooltipDirective } from './tooltip.directive';
+// import { TooltipDirective } from './tooltip.directive';
 
 describe('Tooltip', () => {
     it('should create an instance', () => {

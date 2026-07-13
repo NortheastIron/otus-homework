@@ -74,7 +74,7 @@ export class ToDoPageComponent implements OnInit {
 
         this.toDoService.addTask({
             text: taskName,
-            description: taskDescription || ''
+            description: taskDescription || '',
         });
         this.form.reset();
     }
