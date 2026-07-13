@@ -40,7 +40,8 @@
             <button app-button-title="Add task"
                     [appButtonType]="typesButton.ADD"
                     [disabled]="form.invalid"
-                    appTooltip="Добавить задачу">Add task!
+                    appTooltip="Добавить задачу"
+                    [appTooltipIsDisabled]="form.invalid">Add task!
             </button>
         </form>
     </section>
