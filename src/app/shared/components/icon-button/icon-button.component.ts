@@ -1,6 +1,6 @@
 import { Component, computed, input, InputSignal, Signal } from '@angular/core';
 
-type TypesIconsType = 'CANCEL';
+type TypesIconsType = 'CANCEL' | 'CONFIRM';
 
 @Component({
     selector: 'button[app-icon-button-class]',

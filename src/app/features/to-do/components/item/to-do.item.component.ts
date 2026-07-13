@@ -5,7 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { noWhitespaceValidator } from '@core';
 
-import { ButtonComponent, TooltipDirective, TYPES_BUTTON } from '@shared';
+import { ButtonComponent, IconButtonComponent, TooltipDirective, TYPES_BUTTON } from '@shared';
 
 import { Task } from '@features/to-do/types';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -19,6 +19,7 @@ import { ToDoService } from '@features/to-do/services';
         MatInputModule,
         ButtonComponent,
         TooltipDirective,
+        IconButtonComponent,
     ],
     host: {
         '(click)': 'onItemClick()',
@@ -84,6 +85,11 @@ export class ToDoItemComponent {
             description: this.data().description,
         });
 
+        this.isEdited.set(false);
+    }
+
+    protected onCancelChanges($event: PointerEvent): void {
+        $event.stopPropagation();
         this.isEdited.set(false);
     }
 }

@@ -1,5 +1,6 @@
 <div class="app-to-do-item"
      [class.app-to-do-item_selected]="isSelected()"
+     [class.app-to-do-item_edited]="isEdited()"
      appTooltip="Кликните для подробностей"
      [appTooltipIsDisabled]="isEdited() || isSelected()">
     @if (isEdited()) {
@@ -12,7 +13,21 @@
                    [errorStateMatcher]="defaultMatcher"
                    [formControl]="taskNameControl"> 
         </mat-form-field>
-        <button (click)="onSaveChanges($event)" [disabled]="taskNameControl.invalid" appTooltip="Сохранить изменения">SAVE</button>
+        <div class="app-to-do-item__field-actions">
+            <button app-icon-button-class="CONFIRM"
+                    [disabled]="taskNameControl.invalid"
+                    (click)="onSaveChanges($event)"
+                    appTooltip="Сохранить изменения"
+                    [appTooltipIsDisabled]="taskNameControl.invalid">
+                +
+            </button>
+            <button app-icon-button-class="CANCEL"
+                    (click)="onCancelChanges($event)"
+                    appTooltip="Отменить">
+                X
+            </button>
+        </div>
+        
     } @else {
         <span class="app-to-do-item__text">{{data().text}}</span>
     }
