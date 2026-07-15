@@ -1,6 +1,6 @@
 import { Directive, effect, ElementRef, inject, input, InputSignal, OnDestroy, Renderer2 } from '@angular/core';
 
-import { TooltipService } from '@shared/services';
+import { TooltipService } from '@core';
 
 @Directive({
     selector: '[appTooltip]',
