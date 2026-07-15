@@ -1,24 +1,26 @@
 import { Injectable } from '@angular/core';
 
+import { Toast } from '@core/types';
+
 @Injectable({
     providedIn: 'root',
 })
 export class ToastService {
-    private toast: string[] = [];
+    private toasts: Toast[] = [];
 
-    public show(message: string, duration: number = 5000): void {
-        this.toast.push(message);
+    public show(toast: Toast, duration: number = 5000): void {
+        this.toasts.push(toast);
 
         setTimeout(() => {
-            this.remove(message);
+            this.remove(toast.text);
         }, duration);
     }
 
-    public getToast(): string[] {
-        return this.toast;
+    public getToasts(): Toast[] {
+        return this.toasts;
     }
 
-    private remove(toast: string): void {
-        this.toast = this.toast.filter(item => item !== toast);
+    private remove(text: string): void {
+        this.toasts = this.toasts.filter(item => item.text !== text);
     }
 }

@@ -1,0 +1,1 @@
+export type TypesToast = 'SUCCESS' | 'WARNING' | 'ERROR' | 'INFO';

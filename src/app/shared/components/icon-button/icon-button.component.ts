@@ -1,6 +1,6 @@
 import { Component, computed, input, InputSignal, Signal } from '@angular/core';
 
-type TypesIconsType = 'CANCEL' | 'CONFIRM';
+type TypesIcons = 'CANCEL' | 'CONFIRM';
 
 @Component({
     selector: 'button[app-icon-button-class]',
@@ -11,7 +11,7 @@ type TypesIconsType = 'CANCEL' | 'CONFIRM';
     },
 })
 export class IconButtonComponent {
-    public iconClass: InputSignal<TypesIconsType> = input.required({ alias: 'app-icon-button-class' });
+    public iconClass: InputSignal<TypesIcons> = input.required({ alias: 'app-icon-button-class' });
 
     protected computedIconClass: Signal<string> = computed(() => this.iconClass().toLowerCase());
 }
