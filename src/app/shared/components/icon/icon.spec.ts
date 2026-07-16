@@ -15,7 +15,7 @@ describe('Icon', () => {
 
     fixture = TestBed.createComponent(IconComponent, {
             bindings: [
-                inputBinding('icon-type', () => 'INFO'),
+                inputBinding('iconType', () => 'INFO'),
             ],
         });
     component = fixture.componentInstance;
