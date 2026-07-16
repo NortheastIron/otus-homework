@@ -1,26 +1,36 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 
+import { TYPES_TOAST } from '@core/constants';
 import { Toast } from '@core/types';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ToastService {
-    private toasts: Toast[] = [];
+    private _toasts: WritableSignal<Toast[]> = signal([]);
+    public readonly toasts = this._toasts.asReadonly();
 
-    public show(toast: Toast, duration: number = 5000): void {
-        this.toasts.push(toast);
+    public show(toast: Omit<Toast, 'id'>, duration: number = 5000): void {
+        if (!toast.text.trim()) {
+            return;
+        }
+
+        const id = crypto.randomUUID();
+        this._toasts.update(items => [
+            ...items,
+            {
+                id,
+                text: toast.text.trim(),
+                type: toast.type || TYPES_TOAST.INFO
+            }
+        ]);
 
         setTimeout(() => {
-            this.remove(toast.text);
+            this.remove(id);
         }, duration);
     }
 
-    public getToasts(): Toast[] {
-        return this.toasts;
-    }
-
-    private remove(text: string): void {
-        this.toasts = this.toasts.filter(item => item.text !== text);
+    private remove(id: string): void {
+        this._toasts.update(items => items.filter(item => item.id !== id));
     }
 }

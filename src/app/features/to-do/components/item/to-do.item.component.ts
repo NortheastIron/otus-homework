@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { noWhitespaceValidator } from '@core';
+import { noWhitespaceValidator, ToastService, TYPES_TOAST } from '@core';
 
 import { ButtonComponent, IconButtonComponent, TooltipDirective, TYPES_BUTTON } from '@shared';
 
@@ -30,6 +30,7 @@ import { ToDoService } from '@features/to-do/services';
 })
 export class ToDoItemComponent {
     private toDoService = inject(ToDoService);
+    private toastService = inject(ToastService);
 
     public data: InputSignal<Task> = input.required();
     public isSelected: InputSignal<boolean> = input.required();
@@ -84,7 +85,10 @@ export class ToDoItemComponent {
             text: this.taskNameControl.value.trim(),
             description: this.data().description,
         });
-
+        this.toastService.show({
+            text: 'Toast updated!',
+            type: TYPES_TOAST.SUCCESS
+        });
         this.isEdited.set(false);
     }
 

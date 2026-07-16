@@ -1,0 +1,17 @@
+<section class="app-toasts">
+    @for (item of revertedToasts(); track item.id) {
+        <div class="app-toasts__toast"
+             [class]="{
+                'app-toasts__toast_info': item.type === typesToast.INFO,
+                'app-toasts__toast_success': item.type === typesToast.SUCCESS,
+                'app-toasts__toast_error': item.type === typesToast.ERROR,
+                'app-toasts__toast_warning': item.type === typesToast.WARNING
+             }"
+             animate.enter="app-toasts__toast_enter-animation"
+             animate.leave="app-toasts__toast_leave-animation">
+               <app-icon [iconType]="item.type"></app-icon>
+            <span class="app-toasts__toast-text">{{item.text}}</span>
+        </div>
+    }
+</section>
+

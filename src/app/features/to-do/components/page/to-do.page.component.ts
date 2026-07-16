@@ -3,14 +3,19 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { noWhitespaceValidator } from '@core';
+import { noWhitespaceValidator, ToastService, TYPES_TOAST } from '@core';
 
-import { ButtonComponent, IconButtonComponent, TooltipDirective, TYPES_BUTTON } from '@shared';
+import {
+    ButtonComponent,
+    IconButtonComponent,
+    TooltipDirective,
+    TYPES_BUTTON,
+    ToastsComponent,
+} from '@shared';
 
 import { ToDoItemComponent } from '@features/to-do/components/item';
 import { Task } from '@features/to-do/types';
 import { ToDoService } from '@features/to-do/services';
-
 
 type ToDoForm = {
     taskName: FormControl<string | null>;
@@ -18,22 +23,24 @@ type ToDoForm = {
 }
 
 @Component({
-  selector: 'app-to-do-page',
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ToDoItemComponent,
-    ButtonComponent,
-    TooltipDirective,
-    IconButtonComponent,
-  ],
-  templateUrl: './to-do.page.component.html',
-  styleUrl: './to-do.page.component.scss',
+    selector: 'app-to-do-page',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ToDoItemComponent,
+        ButtonComponent,
+        TooltipDirective,
+        IconButtonComponent,
+        ToastsComponent,
+    ],
+    templateUrl: './to-do.page.component.html',
+    styleUrl: './to-do.page.component.scss',
 })
 export class ToDoPageComponent implements OnInit {
     private fb: FormBuilder = inject(FormBuilder);
+    private toastService = inject(ToastService);
 
     protected toDoService = inject(ToDoService);
     protected tasks = this.toDoService.tasks;
@@ -52,6 +59,11 @@ export class ToDoPageComponent implements OnInit {
         setTimeout(() => {
             this.isLoading.set(false);
         }, 500);
+
+        this.toastService.show({
+            text: 'ToDo page WELCOME',
+            type: TYPES_TOAST.INFO
+        });
     }
 
     protected onHandlerItemDelete(id: number): void {
@@ -59,6 +71,11 @@ export class ToDoPageComponent implements OnInit {
             this.selectedItemId.set(null);
         }
         this.toDoService.removeTask(id);
+
+        this.toastService.show({
+            text: `Toast deleted`,
+            type: TYPES_TOAST.SUCCESS
+        });
     }
     
     protected onHandlerItemSelected(id: number): void {
@@ -76,6 +93,13 @@ export class ToDoPageComponent implements OnInit {
             text: taskName,
             description: taskDescription || '',
         });
+        // покачто ошибок нет чисто удача
+
+        this.toastService.show({
+            text: `Toast created - "${taskName}"`,
+            type: TYPES_TOAST.SUCCESS
+        });
+
         this.form.reset();
     }
 
