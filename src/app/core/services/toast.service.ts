@@ -21,8 +21,8 @@ export class ToastService {
             {
                 id,
                 text: toast.text.trim(),
-                type: toast.type || TYPES_TOAST.INFO
-            }
+                type: toast.type || TYPES_TOAST.INFO,
+            },
         ]);
 
         setTimeout(() => {

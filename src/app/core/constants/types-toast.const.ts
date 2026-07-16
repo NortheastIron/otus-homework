@@ -2,5 +2,5 @@ export const TYPES_TOAST = {
     INFO: 'INFO',
     SUCCESS: 'SUCCESS',
     WARNING: 'WARNING',
-    ERROR: 'ERROR'
+    ERROR: 'ERROR',
 } as const;

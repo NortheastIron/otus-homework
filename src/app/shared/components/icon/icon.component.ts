@@ -4,7 +4,7 @@ export const TYPES_ICON = {
     INFO: 'INFO',
     SUCCESS: 'SUCCESS',
     WARNING: 'WARNING',
-    ERROR: 'ERROR'
+    ERROR: 'ERROR',
 } as const;
 
 type TypesIcon = typeof TYPES_ICON[keyof typeof TYPES_ICON];

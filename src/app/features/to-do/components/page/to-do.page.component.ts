@@ -62,7 +62,7 @@ export class ToDoPageComponent implements OnInit {
 
         this.toastService.show({
             text: 'ToDo page WELCOME',
-            type: TYPES_TOAST.INFO
+            type: TYPES_TOAST.INFO,
         });
     }
 
@@ -74,7 +74,7 @@ export class ToDoPageComponent implements OnInit {
 
         this.toastService.show({
             text: `Toast deleted`,
-            type: TYPES_TOAST.SUCCESS
+            type: TYPES_TOAST.SUCCESS,
         });
     }
     
@@ -97,7 +97,7 @@ export class ToDoPageComponent implements OnInit {
 
         this.toastService.show({
             text: `Toast created - "${taskName}"`,
-            type: TYPES_TOAST.SUCCESS
+            type: TYPES_TOAST.SUCCESS,
         });
 
         this.form.reset();

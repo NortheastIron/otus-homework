@@ -87,7 +87,7 @@ export class ToDoItemComponent {
         });
         this.toastService.show({
             text: 'Toast updated!',
-            type: TYPES_TOAST.SUCCESS
+            type: TYPES_TOAST.SUCCESS,
         });
         this.isEdited.set(false);
     }
