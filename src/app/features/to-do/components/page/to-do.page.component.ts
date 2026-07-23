@@ -3,19 +3,21 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
-import { noWhitespaceValidator, ToastService, TYPES_TOAST } from '@core';
+import { noWhitespaceValidator } from '@core';
 
 import {
     ButtonComponent,
     IconButtonComponent,
-    TooltipDirective,
     TYPES_BUTTON,
-    ToastsComponent,
 } from '@shared';
+
+import { ToastsComponent, ToastService, TYPES_TOAST } from '@common/toasts'
+import { TooltipDirective } from '@common/tooltip';
 
 import { ToDoItemComponent } from '@features/to-do/components/item';
 import { Task } from '@features/to-do/types';
 import { ToDoService } from '@features/to-do/services';
+
 
 type ToDoForm = {
     taskName: FormControl<string | null>;

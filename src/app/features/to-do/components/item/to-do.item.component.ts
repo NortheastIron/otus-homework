@@ -6,9 +6,12 @@ import { ErrorStateMatcher } from '@angular/material/core';
 
 import { noWhitespaceValidator } from '@core';
 
-import { ButtonComponent, IconButtonComponent, TooltipDirective, TYPES_BUTTON } from '@shared';
+import { ButtonComponent, IconButtonComponent, TYPES_BUTTON } from '@shared';
+
+import { TooltipDirective } from '@common';
 
 import { Task } from '@features/to-do/types';
+
 
 @Component({
     selector: 'app-to-do-item',

@@ -1,7 +1,7 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 
-import { TYPES_TOAST } from '@core/constants';
-import { Toast } from '@core/types';
+import { Toast } from '@common/toasts/types';
+import { TYPES_TOAST } from '@common/toasts/constants';
 
 @Injectable({
     providedIn: 'root',

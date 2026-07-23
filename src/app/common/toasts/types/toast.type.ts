@@ -1,4 +1,4 @@
-import { TypesToast } from '@core/types';
+import { TypesToast } from '@common/toasts/types';
 
 export type Toast = {
     id: string;
