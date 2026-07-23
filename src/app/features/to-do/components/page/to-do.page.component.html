@@ -12,7 +12,8 @@
                             <app-to-do-item [data]="item"
                                             [isSelected]="selectedItemId() === item.id"
                                             (itemSelect)="onHandlerItemSelected($event)"
-                                            (itemDelete)="onHandlerItemDelete($event)">
+                                            (itemDelete)="onHandlerItemDelete($event)"
+                                            (itemSaveEdit)="onHandlerItemSaveEdit($event)">
                             </app-to-do-item>
                         </li>
                     }

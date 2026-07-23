@@ -106,4 +106,12 @@ export class ToDoPageComponent implements OnInit {
     protected onCloseDetails() {
         this.selectedItemId.set(null);
     }
+
+    protected onHandlerItemSaveEdit(task: Task) {
+        this.toDoService.updateTask(task);
+        this.toastService.show({
+            text: `Task updated! - "${task.text}"`,
+            type: TYPES_TOAST.SUCCESS
+        });
+    }
 }
