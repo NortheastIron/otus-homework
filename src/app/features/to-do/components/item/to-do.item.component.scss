@@ -30,7 +30,9 @@
     &__text {
         padding: 5px;
         font-weight: 600;
-        word-break: break-all;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     &_selected {
