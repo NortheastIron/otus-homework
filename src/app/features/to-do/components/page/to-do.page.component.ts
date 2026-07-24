@@ -11,7 +11,7 @@ import {
     TYPES_BUTTON,
 } from '@shared';
 
-import { ToastsComponent, ToastService, TYPES_TOAST } from '@common/toasts'
+import { ToastService, TYPES_TOAST } from '@common/toasts'
 import { TooltipDirective } from '@common/tooltip';
 
 import { ToDoItemComponent } from '@features/to-do/components/item';
@@ -35,7 +35,6 @@ type ToDoForm = {
         ButtonComponent,
         TooltipDirective,
         IconButtonComponent,
-        ToastsComponent,
     ],
     templateUrl: './to-do.page.component.html',
     styleUrl: './to-do.page.component.scss',
