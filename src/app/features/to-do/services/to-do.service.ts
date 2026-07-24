@@ -17,12 +17,12 @@ export class ToDoService {
     public readonly tasks = this._tasks.asReadonly();
 
     public addTask(task: Omit<Task, 'id'>): void {
-        const maxId: number = Math.max(1, ...this._tasks().map(item => item.id + 1));
+        const nextId: number = Math.max(1, ...this._tasks().map(item => item.id + 1));
 
         this._tasks.update((items: Task[]) => [
             ...items,
             {
-                id: maxId,
+                id: nextId,
                 text: task.text.trim(),
                 description: task.description.trim(),
             },

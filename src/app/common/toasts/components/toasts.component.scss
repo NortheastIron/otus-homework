@@ -52,56 +52,6 @@
         }
     }
 
-    &__toast-icon {
-        width: 30px;
-        height: 30px;
-        background-color: #e9e6e6;
-        
-        &:before {
-            content: '?';
-
-            font-size: 16px;
-            font-weight: 600;
-            font-family: Arial, sans-serif;
-            font-style: normal;
-            overflow: hidden;
-        }
-        
-
-        &_info {
-            color: var(--info-color);
-            border-radius: 50%;
-
-            &:before {
-                content: 'i';
-            }
-        }
-
-        &_success {
-            color: var(--success-color);
-
-            &:before {
-                content: "\2713";
-            }
-        }
-
-        &_error {
-            color: var(--error-color);
-
-            &:before {
-                content: 'x';
-            }
-        }
-
-        &_warning {
-            color: var(--warning-color);
-
-            &:before {
-                content: '!';
-            }
-        }
-    }
-
     &__toast-text {
         white-space: nowrap;
         overflow: hidden;

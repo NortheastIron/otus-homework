@@ -13,7 +13,7 @@ import { TYPES_TOAST } from '@common/toasts/constants';
 })
 export class ToastsComponent {
     private toastService = inject(ToastService);
-    protected revertedToasts = computed(() => [...this.toastService.toasts()].reverse());
+    protected reversedToasts = computed(() => [...this.toastService.toasts()].reverse());
 
     protected typesToast = TYPES_TOAST;
 }

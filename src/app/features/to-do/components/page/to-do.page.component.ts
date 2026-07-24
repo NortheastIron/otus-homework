@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
@@ -27,7 +27,6 @@ type ToDoForm = {
 @Component({
     selector: 'app-to-do-page',
     imports: [
-        FormsModule,
         ReactiveFormsModule,
         MatFormFieldModule,
         MatInputModule,
@@ -74,7 +73,7 @@ export class ToDoPageComponent implements OnInit {
         this.toDoService.removeTask(id);
 
         this.toastService.show({
-            text: `Toast deleted`,
+            text: `Task deleted`,
             type: TYPES_TOAST.SUCCESS,
         });
     }
@@ -97,7 +96,7 @@ export class ToDoPageComponent implements OnInit {
         // покачто ошибок нет чисто удача
 
         this.toastService.show({
-            text: `Toast created - "${taskName}"`,
+            text: `Task created - "${taskName}"`,
             type: TYPES_TOAST.SUCCESS,
         });
 

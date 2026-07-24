@@ -6,6 +6,7 @@
     align-items: center;
     background-color: #F2F2F2;
     border-radius: 5px;
+    cursor: pointer;
 
     height: 40px;
     transition: height 400ms ease-out;
@@ -13,6 +14,7 @@
 
     &_edited {
         height: 106px;
+        cursor: default;
     }
 
     &__field {
@@ -33,5 +35,6 @@
 
     &_selected {
         background-color: #c3c3c3;
+        cursor: default;
     }
 }

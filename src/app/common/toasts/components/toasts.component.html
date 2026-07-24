@@ -1,5 +1,5 @@
 <section class="app-toasts">
-    @for (item of revertedToasts(); track item.id) {
+    @for (item of reversedToasts(); track item.id) {
         <div class="app-toasts__toast"
              [class]="{
                 'app-toasts__toast_info': item.type === typesToast.INFO,
@@ -9,7 +9,7 @@
              }"
              animate.enter="app-toasts__toast_enter-animation"
              animate.leave="app-toasts__toast_leave-animation">
-               <app-icon [iconType]="item.type"></app-icon>
+            <app-icon [iconType]="item.type"></app-icon>
             <span class="app-toasts__toast-text">{{item.text}}</span>
         </div>
     }
