@@ -111,7 +111,7 @@ export class ToDoPageComponent implements OnInit {
         this.toDoService.updateTask(task);
         this.toastService.show({
             text: `Task updated! - "${task.text}"`,
-            type: TYPES_TOAST.SUCCESS
+            type: TYPES_TOAST.SUCCESS,
         });
     }
 }
