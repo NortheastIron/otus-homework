@@ -1,8 +1,15 @@
 <div class="app-to-do-item"
-     [class.app-to-do-item_selected]="isSelected()"
+     [class.app-to-do-item_view]="isView()"
      [class.app-to-do-item_edited]="isEdit()"
      appTooltip="Кликните для подробностей"
-     [appTooltipIsDisabled]="isEdit() || isSelected()">
+     [appTooltipIsDisabled]="isEdit() || isView()">
+    <input class="app-to-do-item__checkbox"
+           type="checkbox"
+           [checked]="isSelect()"
+           (change)="onCheckboxChanged()"
+           appTooltip="Кликните для изменения"
+           [appTooltipIsDisabled]="isEdit()"
+           [disabled]="isEdit()">
     @if (isEdit()) {
         <mat-form-field class="app-to-do-item__field">
             <mat-label>Todo name</mat-label>

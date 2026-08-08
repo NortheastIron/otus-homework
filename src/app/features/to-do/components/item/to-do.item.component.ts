@@ -32,11 +32,13 @@ import { Task } from '@features/to-do/types';
 })
 export class ToDoItemComponent {
     public data: InputSignal<Task> = input.required();
-    public isSelected: InputSignal<boolean> = input.required();
+    public isSelect: InputSignal<boolean> = input.required();
+    public isView: InputSignal<boolean> = input.required();
 
     public itemDelete: OutputEmitterRef<number> = output();
-    public itemSelect: OutputEmitterRef<number> = output();
+    public itemCheckboxChanged: OutputEmitterRef<number> = output();
     public itemSaveEdit: OutputEmitterRef<Task> = output();
+    public itemClicked: OutputEmitterRef<number> = output();
 
     protected typesButton = TYPES_BUTTON;
     protected isEdit: WritableSignal<boolean> = signal(false);
@@ -62,7 +64,7 @@ export class ToDoItemComponent {
 
         this.clickTimer = setTimeout(() => {
             if (this.isSingleClickAllowed) {
-                this.itemSelect.emit(this.data().id);
+                this.itemClicked.emit(this.data().id);
             }
         }, 200);
     }
@@ -92,5 +94,9 @@ export class ToDoItemComponent {
 
     protected onCancelChanges(): void {
         this.isEdit.set(false);
+    }
+
+    protected onCheckboxChanged() {
+        this.itemCheckboxChanged.emit(this.data().id);
     }
 }

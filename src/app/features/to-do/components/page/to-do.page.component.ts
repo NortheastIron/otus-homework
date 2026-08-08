@@ -43,17 +43,18 @@ type ToDoForm = {
 export class ToDoPageComponent implements OnInit {
     private fb: FormBuilder = inject(FormBuilder);
     private toastService = inject(ToastService);
+    private toDoService = inject(ToDoService);
 
-    protected toDoService = inject(ToDoService);
     protected tasks = this.toDoService.tasks;
     protected isLoading: WritableSignal<boolean> = signal(true);
     protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.tasks().length);
-    protected selectedItemId: WritableSignal<number | null> = signal(null); 
-    protected selectedItem: Signal<Task | null> = computed(() => this.tasks().find(item => item.id === this.selectedItemId()) || null);
+    protected viewItemId: WritableSignal<number | null> = signal(null); 
+    protected viewItem: Signal<Task | null> = computed(() => this.tasks().find(item => item.id === this.viewItemId()) || null);
     protected form: FormGroup<ToDoForm> = this.fb.group({
         taskName: ['', [Validators.required, noWhitespaceValidator]],
         taskDescription: [''],
     });
+    protected selectedIds = new Set<number>([]);
 
     protected typesButton = TYPES_BUTTON;
 
@@ -69,8 +70,8 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onHandlerItemDelete(id: number): void {
-        if (this.selectedItemId() === id) {
-            this.selectedItemId.set(null);
+        if (this.viewItemId() === id) {
+            this.viewItemId.set(null);
         }
         this.toDoService.removeTask(id);
 
@@ -80,8 +81,16 @@ export class ToDoPageComponent implements OnInit {
         });
     }
     
-    protected onHandlerItemSelected(id: number): void {
-        this.selectedItemId.set(id);
+    protected onHandlerItemClicked(id: number): void {
+        this.viewItemId.set(id);
+    }
+
+    protected onHandlerItemCheckboxChanged(id: number): void {
+        if (this.selectedIds.has(id)) {
+            this.selectedIds.delete(id);
+        } else {
+            this.selectedIds.add(id);
+        }
     }
 
     protected onSubmitToDoForm() {
@@ -106,7 +115,7 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onCloseDetails() {
-        this.selectedItemId.set(null);
+        this.viewItemId.set(null);
     }
 
     protected onHandlerItemSaveEdit(task: Task) {

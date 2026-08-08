@@ -10,8 +10,10 @@
                     @for (item of tasks(); track item.id) {
                         <li>
                             <app-to-do-item [data]="item"
-                                            [isSelected]="selectedItemId() === item.id"
-                                            (itemSelect)="onHandlerItemSelected($event)"
+                                            [isView]="viewItemId() === item.id"
+                                            [isSelect]="selectedIds.has(item.id)"
+                                            (itemClicked)="onHandlerItemClicked($event)"
+                                            (itemCheckboxChanged)="onHandlerItemCheckboxChanged($event)"
                                             (itemDelete)="onHandlerItemDelete($event)"
                                             (itemSaveEdit)="onHandlerItemSaveEdit($event)">
                             </app-to-do-item>
@@ -47,14 +49,14 @@
         </form>
     </section>
 
-    @if (selectedItemId()) {
+    @if (viewItemId()) {
         <section class="app-to-do-details">
             <div class="app-to-do-details__header">
-                <h2 class="app-to-do-details__title">{{this.selectedItem()?.text}}</h2>
+                <h2 class="app-to-do-details__title">{{this.viewItem()?.text}}</h2>
                 <button app-icon-button-class="CANCEL" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
             </div>
             
-            <div class="app-to-do-details__description">{{this.selectedItem()?.description}}</div>
+            <div class="app-to-do-details__description">{{this.viewItem()?.description}}</div>
         </section>
     }
 
