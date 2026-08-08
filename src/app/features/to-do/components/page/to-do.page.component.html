@@ -38,11 +38,11 @@
                     <input name="taskDescription" matInput type="text" placeholder="Enter text..." [formControl]="form.controls.taskDescription">
                 </mat-form-field>
             </div>
-            <button app-button-title="Add task"
+            <button app-button
                     [appButtonType]="typesButton.ADD"
                     [disabled]="form.invalid"
                     appTooltip="Добавить задачу"
-                    [appTooltipIsDisabled]="form.invalid">Add task!
+                    [appTooltipIsDisabled]="form.invalid">Add task
             </button>
         </form>
     </section>

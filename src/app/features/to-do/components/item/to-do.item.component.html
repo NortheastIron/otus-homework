@@ -31,5 +31,5 @@
     } @else {
         <span class="app-to-do-item__text">{{data().text}}</span>
     }
-    <button app-button-title="Delete" [appButtonType]="typesButton.DELETE" (click)="onRemove()" appTooltip="Удалить задачу">Delete</button>
+    <button app-button [appButtonType]="typesButton.DELETE" (click)="onRemove()" appTooltip="Удалить задачу">Delete</button>
 </div>

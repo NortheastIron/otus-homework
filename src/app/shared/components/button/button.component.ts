@@ -8,7 +8,7 @@ export const TYPES_BUTTON = {
 type TypesButton = typeof TYPES_BUTTON[keyof typeof TYPES_BUTTON];
 
 @Component({
-    selector: 'button[app-button-title]',
+    selector: 'button[app-button]',
     templateUrl: './button.component.html',
     styleUrl: './button.component.scss',
     host: {
@@ -17,7 +17,6 @@ type TypesButton = typeof TYPES_BUTTON[keyof typeof TYPES_BUTTON];
     },
 })
 export class ButtonComponent {
-    public title: InputSignal<string> = input.required({ alias: 'app-button-title' });
     public appButtonType: InputSignal<TypesButton | null> = input<TypesButton | null>(null);
 
     protected typeButtonClass: Signal<string> = computed(() => this.appButtonType() ? `app-button_${this.appButtonType()}` : '');
