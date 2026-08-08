@@ -33,7 +33,7 @@ class HostComponent {
 }
 describe('TooltipDirective', () => {
     let fixture: ComponentFixture<HostComponent>;
-    let host: HostComponent;
+    // let host: HostComponent;
     let service: FakeTooltipService;
     let buttonEl: HTMLElement;
  
@@ -43,15 +43,15 @@ describe('TooltipDirective', () => {
             providers: [{ provide: TooltipService, useClass: FakeTooltipService }, provideZonelessChangeDetection()],
         });
         fixture = TestBed.createComponent(HostComponent);
-        host = fixture.componentInstance;
+        // host = fixture.componentInstance;
         service = TestBed.inject(TooltipService) as unknown as FakeTooltipService;
         buttonEl = fixture.debugElement.query(By.directive(TooltipDirective)).nativeElement;
         await fixture.whenStable();
     });
 
-    function tooltipInDom(): HTMLElement | null {
-        return document.querySelector('.app-tooltip');
-    }
+    // function tooltipInDom(): HTMLElement | null {
+    //     return document.querySelector('.app-tooltip');
+    // }
 
     it('calls service.enter with the host element on mouseenter', () => {
         buttonEl.dispatchEvent(new MouseEvent('mouseenter'));
