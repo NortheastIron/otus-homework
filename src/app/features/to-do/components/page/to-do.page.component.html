@@ -4,7 +4,7 @@
 
         <div class="app-to-do-list__cont" [class.app-to-do-list__cont_empty-loader]="isEmptyOrLoading()">
             @if (isLoading()) {
-                <span class="app-loader"></span>
+                <app-loading-indicator></app-loading-indicator>
             } @else if (tasks().length) {
                 <ul class="app-to-do-list__items">
                     @for (item of tasks(); track item.id) {

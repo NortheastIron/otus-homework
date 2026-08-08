@@ -9,6 +9,7 @@ import {
     ButtonComponent,
     IconButtonComponent,
     TYPES_BUTTON,
+    LoadingIndicatorComponent,
 } from '@shared';
 
 import { ToastService, TYPES_TOAST } from '@common/toasts'
@@ -34,6 +35,7 @@ type ToDoForm = {
         ButtonComponent,
         TooltipDirective,
         IconButtonComponent,
+        LoadingIndicatorComponent,
     ],
     templateUrl: './to-do.page.component.html',
     styleUrl: './to-do.page.component.scss',
