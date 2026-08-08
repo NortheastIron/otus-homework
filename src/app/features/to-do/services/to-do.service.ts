@@ -1,6 +1,7 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 
 import { Task } from '@features/to-do/types';
+import { TASK_STATUS } from '@features/to-do/constants';
 
 @Injectable({
     providedIn: 'root',
@@ -11,12 +12,13 @@ export class ToDoService {
             id: 1,
             text: 'First',
             description: 'First task',
+            status: TASK_STATUS.INPROGRESS,
         },
     ]);
 
     public readonly tasks = this._tasks.asReadonly();
 
-    public addTask(task: Omit<Task, 'id'>): void {
+    public addTask(task: Omit<Task, 'id' | 'status'>): void {
         const nextId: number = Math.max(1, ...this._tasks().map(item => item.id + 1));
 
         this._tasks.update((items: Task[]) => [
@@ -25,6 +27,7 @@ export class ToDoService {
                 id: nextId,
                 text: task.text.trim(),
                 description: task.description.trim(),
+                status: TASK_STATUS.NEW,
             },
         ]);
     }
