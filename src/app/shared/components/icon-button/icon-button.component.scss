@@ -1,26 +1,44 @@
 :host(.app-icon-button) {
     height: 30px;
     width: 30px;
-    border: 1px solid #c1c1c1;
+    border: 1px solid #a7a7a7;
     border-radius: 50%;
-    background-color: inherit;
+    background-color: #fff;
     color: #000;
     cursor: pointer;
     font-size: 14px;
+    overflow: hidden;
 
     &:hover {
         background-color: #e2e2e2;
     }
+
+    &:disabled {
+        color: #797979;
+        background-color: #ececec;
+        cursor: default;
+    }
 }
 
 .app-icon-button__icon {
-    &_cancel {
-        &:before {
-            content: 'x';
+    &:before {
+            content: '';
             font-size: 16px;
             font-weight: 400;
             font-family: Arial, sans-serif;
             font-style: normal;
+            overflow: hidden;
+    }
+
+    &_cancel {
+        &:before {
+            content: 'x';
+        }
+    }
+
+    &_confirm {
+        &:before {
+            content: "\2713";
         }
     }
 }

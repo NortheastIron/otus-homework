@@ -12,7 +12,8 @@
                             <app-to-do-item [data]="item"
                                             [isSelected]="selectedItemId() === item.id"
                                             (itemSelect)="onHandlerItemSelected($event)"
-                                            (itemDelete)="onHandlerItemDelete($event)">
+                                            (itemDelete)="onHandlerItemDelete($event)"
+                                            (itemSaveEdit)="onHandlerItemSaveEdit($event)">
                             </app-to-do-item>
                         </li>
                     }
@@ -30,7 +31,7 @@
                         matInput
                         type="text"
                         placeholder="Enter text..."
-                        [formControl]="form.controls.taskName"> 
+                        [formControl]="form.controls.taskName">
                 </mat-form-field>
                 <mat-form-field class="app-to-do-list__field">
                     <mat-label>Leave a description</mat-label>
@@ -38,9 +39,10 @@
                 </mat-form-field>
             </div>
             <button app-button-title="Add task"
-                    appButtonType="ADD"
+                    [appButtonType]="typesButton.ADD"
                     [disabled]="form.invalid"
-                    appTooltip="Добавить задачу">Add task!
+                    appTooltip="Добавить задачу"
+                    [appTooltipIsDisabled]="form.invalid">Add task!
             </button>
         </form>
     </section>

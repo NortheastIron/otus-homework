@@ -21,6 +21,8 @@
       "@shared/*": ["./src/app/shared/*"],
       "@features": ["./src/app/features/index.ts"],
       "@features/*": ["./src/app/features/*"],
+      "@common": ["./src/app/common/index.ts"],
+      "@common/*": ["./src/app/common/*"],
     }
   },
   "angularCompilerOptions": {

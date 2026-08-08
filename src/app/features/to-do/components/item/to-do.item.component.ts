@@ -1,16 +1,31 @@
-import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
+import { Component, input, InputSignal, output, OutputEmitterRef, signal, WritableSignal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { ErrorStateMatcher } from '@angular/material/core';
+
+import { noWhitespaceValidator } from '@core';
+
+import { ButtonComponent, IconButtonComponent, TYPES_BUTTON } from '@shared';
+
+import { TooltipDirective } from '@common';
 
 import { Task } from '@features/to-do/types';
-import { ButtonComponent, TooltipDirective } from '@shared';
+
 
 @Component({
     selector: 'app-to-do-item',
     imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
         ButtonComponent,
         TooltipDirective,
+        IconButtonComponent,
     ],
     host: {
-        '(click)': 'onItemClick()',
+        '(click)': 'onItemClick($event)',
+        '(dblclick)': 'onItemDblClick($event)',
     },
     templateUrl: './to-do.item.component.html',
     styleUrl: './to-do.item.component.scss',
@@ -21,13 +36,61 @@ export class ToDoItemComponent {
 
     public itemDelete: OutputEmitterRef<number> = output();
     public itemSelect: OutputEmitterRef<number> = output();
+    public itemSaveEdit: OutputEmitterRef<Task> = output();
 
-    protected onRemove($event: PointerEvent): void {
-        $event.stopPropagation();
+    protected typesButton = TYPES_BUTTON;
+    protected isEdit: WritableSignal<boolean> = signal(false);
+
+    protected taskNameControl = new FormControl('', [noWhitespaceValidator]);
+    protected defaultMatcher = new ErrorStateMatcher();
+
+    private isSingleClickAllowed: boolean = false;
+    private clickTimer: number | undefined;
+
+    protected onRemove(): void {
         this.itemDelete.emit(this.data().id);
     }
 
-    protected onItemClick(): void {
-        this.itemSelect.emit(this.data().id);
+    protected onItemClick($event: PointerEvent): void {
+        const target = $event.target as HTMLElement;
+
+        if (this.isEdit() || target.closest('input') || target.closest('button')) {
+            return;
+        }
+
+        this.isSingleClickAllowed = true;
+
+        this.clickTimer = setTimeout(() => {
+            if (this.isSingleClickAllowed) {
+                this.itemSelect.emit(this.data().id);
+            }
+        }, 200);
+    }
+
+    protected onItemDblClick($event: MouseEvent): void {
+        const target = $event.target as HTMLElement;
+
+        if (this.isEdit() || target.closest('input') || target.closest('button')) {
+            return;
+        }
+
+        this.isSingleClickAllowed = false;
+        clearTimeout(this.clickTimer);
+
+        this.taskNameControl.setValue(this.data().text);
+        this.isEdit.set(true);
+    }
+
+    protected onSaveChanges(): void {
+        if (!this.taskNameControl.value) {
+            return;
+        }
+
+        this.itemSaveEdit.emit({...this.data(), text: this.taskNameControl.value.trim()});
+        this.isEdit.set(false);
+    }
+
+    protected onCancelChanges(): void {
+        this.isEdit.set(false);
     }
 }

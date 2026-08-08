@@ -1,11 +1,11 @@
 import { Component, computed, input, InputSignal, Signal } from '@angular/core';
 
-const TYPES_BUTTON = {
-    DELETE: 'DELETE',
-    ADD: 'ADD',
+export const TYPES_BUTTON = {
+    DELETE: 'delete',
+    ADD: 'add',
 } as const;
 
-type TypesButtonType = typeof TYPES_BUTTON[keyof typeof TYPES_BUTTON];
+type TypesButton = typeof TYPES_BUTTON[keyof typeof TYPES_BUTTON];
 
 @Component({
     selector: 'button[app-button-title]',
@@ -18,16 +18,7 @@ type TypesButtonType = typeof TYPES_BUTTON[keyof typeof TYPES_BUTTON];
 })
 export class ButtonComponent {
     public title: InputSignal<string> = input.required({ alias: 'app-button-title' });
-    public appButtonType: InputSignal<TypesButtonType | null> = input<TypesButtonType | null>(null);
+    public appButtonType: InputSignal<TypesButton | null> = input<TypesButton | null>(null);
 
-    protected typeButtonClass: Signal<string> = computed(() => {
-        switch(this.appButtonType()) {
-            case TYPES_BUTTON.ADD:
-                return 'app-button_add';
-            case TYPES_BUTTON.DELETE:
-                return 'app-button_delete';
-            default:
-                return '';
-        }
-    });
+    protected typeButtonClass: Signal<string> = computed(() => this.appButtonType() ? `app-button_${this.appButtonType()}` : '');
 }

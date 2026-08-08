@@ -1,6 +1,6 @@
 import { Directive, effect, ElementRef, inject, input, InputSignal, OnDestroy, Renderer2 } from '@angular/core';
 
-import { TooltipService } from '@shared/services';
+import { TooltipService } from '@common/tooltip/services';
 
 @Directive({
     selector: '[appTooltip]',
@@ -13,6 +13,7 @@ import { TooltipService } from '@shared/services';
 })
 export class TooltipDirective implements OnDestroy {
     public appTooltip: InputSignal<string> = input('');
+    public appTooltipIsDisabled: InputSignal<boolean> = input(false);
 
     private readonly el: ElementRef<HTMLElement> = inject(ElementRef);
     private readonly renderer: Renderer2 = inject(Renderer2);
@@ -22,7 +23,7 @@ export class TooltipDirective implements OnDestroy {
 
     constructor() {
         effect(() => {
-            if (this.el.nativeElement === this.tooltipService.activeElement()) {
+            if (this.el.nativeElement === this.tooltipService.activeElement() && !this.appTooltipIsDisabled()) {
                 this.showElement();
             } else {
                 this.hideElement();
@@ -36,12 +37,13 @@ export class TooltipDirective implements OnDestroy {
     }
 
     protected show($event: MouseEvent | FocusEvent) {
-        this.tooltipService.enter(this.el.nativeElement);
         this.tooltipEvent = $event;
+        this.tooltipService.enter(this.el.nativeElement);
     }
 
     protected hide() {
         this.tooltipService.leave(this.el.nativeElement);
+        this.tooltipEvent = null;
     }
 
     private showElement(): void {

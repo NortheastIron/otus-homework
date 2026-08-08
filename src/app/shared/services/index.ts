@@ -1,1 +1,0 @@
-export { TooltipService } from './tooltip.service';

@@ -1,0 +1,80 @@
+:host {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+.app-toasts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    --info-color: rgb(101, 126, 209);
+    --success-color: rgb(65, 173, 114);
+    --warning-color: rgb(228, 157, 65);
+    --error-color: rgb(224, 66, 66);
+
+    &__toast {
+        height: 50px;
+        width: 300px;
+        padding: 10px 15px;
+
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+        border-radius: 10px;
+        color: #FFF;
+
+        &_enter-animation {
+            animation: enter-slide-fade 1s;
+        }
+
+        &_leave-animation {
+            animation: leave-slide-fade 1s;
+        }
+
+        &_info {
+            background-color: var(--info-color);
+        }
+
+        &_success {
+            background-color: var(--success-color);
+        }
+
+        &_warning {
+            background-color: var(--warning-color);
+        }
+
+        &_error {
+            background-color: var(--error-color);
+        }
+    }
+
+    &__toast-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@keyframes enter-slide-fade {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes leave-slide-fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
