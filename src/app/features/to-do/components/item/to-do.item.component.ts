@@ -11,6 +11,7 @@ import { ButtonComponent, IconButtonComponent, TYPES_BUTTON } from '@shared';
 import { TooltipDirective } from '@common';
 
 import { Task } from '@features/to-do/types';
+import { TASK_STATUS } from '@features/to-do/constants';
 
 
 @Component({
@@ -41,6 +42,7 @@ export class ToDoItemComponent {
     public itemClicked: OutputEmitterRef<number> = output();
 
     protected typesButton = TYPES_BUTTON;
+    protected taskStatus = TASK_STATUS;
     protected isEdit: WritableSignal<boolean> = signal(false);
 
     protected taskNameControl = new FormControl('', [noWhitespaceValidator]);

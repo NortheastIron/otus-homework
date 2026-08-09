@@ -10,6 +10,13 @@
            appTooltip="Кликните для изменения"
            [appTooltipIsDisabled]="isEdit()"
            [disabled]="isEdit()">
+    <div class="app-to-do-item__status"
+         [class]="{
+            'app-to-do-item__status_new' : data().status === taskStatus.NEW,
+            'app-to-do-item__status_inprogress' : data().status === taskStatus.INPROGRESS,
+            'app-to-do-item__status_completed' : data().status === taskStatus.COMPLETED,
+         }">
+    </div>
     @if (isEdit()) {
         <mat-form-field class="app-to-do-item__field">
             <mat-label>Todo name</mat-label>

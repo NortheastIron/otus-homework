@@ -17,6 +17,27 @@
         cursor: default;
     }
 
+    &__status {
+        flex: 0 0 auto;
+        height: 9px;
+        width: 9px;
+        background-color: black;
+        border-radius: 50%;
+        border: 1px solid #d9d9d9;
+
+        &_new {
+            background-color: blue;
+        }
+
+        &_inprogress {
+            background-color: yellow;
+        }
+
+        &_completed {
+            background-color: green;
+        }
+    }
+
     &__field {
         padding-top: 20px;
     }
