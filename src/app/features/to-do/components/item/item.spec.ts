@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ToDoItemComponent } from './to-do.item.component';
 
+// т.к. изменились входные параметры можно задать тесты на проверку этого поведения
+
 describe('Item', () => {
     let component: ToDoItemComponent;
     let fixture: ComponentFixture<ToDoItemComponent>;
@@ -14,7 +16,8 @@ describe('Item', () => {
 
         fixture = TestBed.createComponent(ToDoItemComponent, {
             bindings: [
-                inputBinding('isSelected', () => true),
+                inputBinding('isSelect', () => true),
+                inputBinding('isView', () => false),
                 inputBinding('data', () => ({id: 1, text: 'test', description: 'test'})),
             ],
         });

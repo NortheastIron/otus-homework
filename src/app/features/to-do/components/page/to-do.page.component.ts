@@ -16,8 +16,9 @@ import { ToastService, TYPES_TOAST } from '@common/toasts'
 import { TooltipDirective } from '@common/tooltip';
 
 import { ToDoItemComponent } from '@features/to-do/components/item';
-import { Task } from '@features/to-do/types';
+import { Task, TaskStatus } from '@features/to-do/types';
 import { ToDoService } from '@features/to-do/services';
+import { TASK_STATUS } from '@features/to-do/constants';
 
 
 type ToDoForm = {
@@ -54,9 +55,11 @@ export class ToDoPageComponent implements OnInit {
         taskName: ['', [Validators.required, noWhitespaceValidator]],
         taskDescription: [''],
     });
-    protected selectedIds = new Set<number>([]);
+    protected selectedIds: WritableSignal<Set<number>> = signal(new Set([]));
+    protected selectedCount = computed(() => this.selectedIds().size);
 
     protected typesButton = TYPES_BUTTON;
+    protected taskStatus = TASK_STATUS;
 
     ngOnInit(): void {
         setTimeout(() => {
@@ -86,11 +89,17 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onHandlerItemCheckboxChanged(id: number): void {
-        if (this.selectedIds.has(id)) {
-            this.selectedIds.delete(id);
-        } else {
-            this.selectedIds.add(id);
-        }
+        this.selectedIds.update(set => {
+            const nSet = new Set(set);
+
+            if (nSet.has(id)) {
+                nSet.delete(id);
+            } else {
+                nSet.add(id);
+            }
+
+            return nSet;
+        });
     }
 
     protected onSubmitToDoForm() {
@@ -122,6 +131,17 @@ export class ToDoPageComponent implements OnInit {
         this.toDoService.updateTask(task);
         this.toastService.show({
             text: `Task updated! - "${task.text}"`,
+            type: TYPES_TOAST.SUCCESS,
+        });
+    }
+
+    protected onStatusChange(status: TaskStatus) {
+        this.toDoService.updateStatus(status, [...this.selectedIds().values()]);
+        this.selectedIds.update(() => {
+            return new Set();
+        });
+        this.toastService.show({
+            text: `Status updated`,
             type: TYPES_TOAST.SUCCESS,
         });
     }

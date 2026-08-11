@@ -1,6 +1,6 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 
-import { Task } from '@features/to-do/types';
+import { Task, TaskStatus } from '@features/to-do/types';
 import { TASK_STATUS } from '@features/to-do/constants';
 
 @Injectable({
@@ -38,5 +38,9 @@ export class ToDoService {
 
     public updateTask(task: Task): void {
         this._tasks.update(items => items.map(item => item.id === task.id ? { ...task } : item));
+    }
+
+    public updateStatus(status: TaskStatus, ids: number[]) {
+        this._tasks.update(items => items.map(item => ids.includes(item.id) ? { ...item, status } : item));
     }
 }

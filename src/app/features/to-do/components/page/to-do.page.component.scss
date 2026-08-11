@@ -35,6 +35,25 @@
         gap: 5px;
     }
 
+    &__status-management {
+        display: flex;
+        gap: 5px;
+
+        .app-button {
+            &_new {
+                --app-button-background-color: blue;
+            }
+
+            &_inprogress {
+                --app-button-background-color: rgb(255, 157, 0);
+            }
+
+            &_completed {
+                --app-button-background-color: green;
+            }
+        }
+    }
+
     &__form {
         display: flex;
         justify-content: space-between;

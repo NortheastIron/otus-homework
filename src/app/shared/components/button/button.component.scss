@@ -1,10 +1,12 @@
 :host(.app-button) {
+    --app-button-background-color: #b694eb;
+
     max-width: 100px;
     min-width: 50px;
     padding: 5px;
     border: none;
     border-radius: 5px;
-    background-color: #b694eb;
+    background-color: var(--app-button-background-color);
     color: #fff;
     cursor: pointer;
 
@@ -22,9 +24,9 @@
 }
 
 :host(.app-button_add) {
-    background-color: rgb(100, 163, 100);
+    --app-button-background-color: rgb(100, 163, 100);
 }
 
 :host(.app-button_delete) {
-    background-color: rgb(202, 69, 69);
+    --app-button-background-color: rgb(202, 69, 69);
 }

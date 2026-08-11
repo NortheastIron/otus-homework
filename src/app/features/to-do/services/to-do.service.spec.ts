@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { ToDoService } from './to-do.service';
+import { TASK_STATUS } from '../constants';
 
 describe('ToDoService', () => {
     let service: ToDoService;
@@ -33,6 +34,7 @@ describe('ToDoService', () => {
             id: 1,
             text: 'FirstNew',
             description: 'DescriptionNew',
+            status: TASK_STATUS.NEW,
         });
 
         expect(service.tasks()).toEqual([
@@ -40,6 +42,7 @@ describe('ToDoService', () => {
                 id: 1,
                 text: 'FirstNew',
                 description: 'DescriptionNew',
+                status: TASK_STATUS.NEW,
             },
         ]);
     });

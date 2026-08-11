@@ -2,6 +2,10 @@
     <section class="app-to-do-list">
         <h1>Todo List</h1>
 
+        <!-- <div class="app-to-do-list__filters">
+            FILTERS
+        </div> -->
+
         <div class="app-to-do-list__cont" [class.app-to-do-list__cont_empty-loader]="isEmptyOrLoading()">
             @if (isLoading()) {
                 <app-loading-indicator></app-loading-indicator>
@@ -11,7 +15,7 @@
                         <li>
                             <app-to-do-item [data]="item"
                                             [isView]="viewItemId() === item.id"
-                                            [isSelect]="selectedIds.has(item.id)"
+                                            [isSelect]="selectedIds().has(item.id)"
                                             (itemClicked)="onHandlerItemClicked($event)"
                                             (itemCheckboxChanged)="onHandlerItemCheckboxChanged($event)"
                                             (itemDelete)="onHandlerItemDelete($event)"
@@ -23,6 +27,30 @@
             } @else {
                 <p>Список пуст. Добавьте задачу</p>
             }
+        </div>
+
+        <div class="app-to-do-list__status-management">
+            <button app-button
+                    class="app-button_new"
+                    [disabled]="selectedCount() < 1"
+                    (click)="onStatusChange(taskStatus.NEW)"
+                    appTooltip="Установить статус NEW"
+                    [appTooltipIsDisabled]="selectedCount() < 1">NEW
+            </button>
+            <button app-button
+                    class="app-button_inprogress"
+                    [disabled]="selectedCount() < 1"
+                    (click)="onStatusChange(taskStatus.INPROGRESS)"
+                    appTooltip="Установить статус In progress"
+                    [appTooltipIsDisabled]="selectedCount() < 1">In progress
+            </button>
+            <button app-button
+                    class="app-button_completed"
+                    [disabled]="selectedCount() < 1"
+                    (click)="onStatusChange(taskStatus.COMPLETED)"
+                    appTooltip="Установить статус Completed"
+                    [appTooltipIsDisabled]="selectedCount() < 1">Completed
+            </button>
         </div>
 
         <form [formGroup]="form" (ngSubmit)="onSubmitToDoForm()" class="app-to-do-list__form">
