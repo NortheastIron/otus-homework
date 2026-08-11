@@ -7,9 +7,7 @@
            type="checkbox"
            [checked]="isSelect()"
            (change)="onCheckboxChanged()"
-           appTooltip="Кликните для изменения"
-           [appTooltipIsDisabled]="isEdit()"
-           [disabled]="isEdit()">
+           appTooltip="Кликните для изменения">
     <div class="app-to-do-item__status"
          [class]="{
             'app-to-do-item__status_new' : data().status === taskStatus.NEW,

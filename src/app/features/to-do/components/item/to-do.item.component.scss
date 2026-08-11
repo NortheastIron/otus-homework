@@ -12,6 +12,10 @@
     transition: height 400ms ease-out;
     overflow: hidden;
 
+    &__checkbox {
+        cursor: pointer;
+    }
+
     &_edited {
         height: 106px;
         cursor: default;
