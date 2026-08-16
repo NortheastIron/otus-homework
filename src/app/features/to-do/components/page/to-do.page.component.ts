@@ -1,14 +1,11 @@
 import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
-import { noWhitespaceValidator } from '@core';
+import { MatSelectModule } from '@angular/material/select';
 
 import {
     ButtonComponent,
     IconButtonComponent,
-    TYPES_BUTTON,
     LoadingIndicatorComponent,
 } from '@shared';
 
@@ -19,47 +16,50 @@ import { ToDoItemComponent } from '@features/to-do/components/item';
 import { Task, TaskStatus } from '@features/to-do/types';
 import { ToDoService } from '@features/to-do/services';
 import { TASK_STATUS } from '@features/to-do/constants';
-
-
-type ToDoForm = {
-    taskName: FormControl<string | null>;
-    taskDescription: FormControl<string | null>;
-}
+import { ToDoCreateItemComponent } from '@features/to-do/components/create-item';
 
 @Component({
     selector: 'app-to-do-page',
     imports: [
-        ReactiveFormsModule,
         MatFormFieldModule,
         MatInputModule,
+        MatSelectModule,
         ToDoItemComponent,
         ButtonComponent,
         TooltipDirective,
         IconButtonComponent,
         LoadingIndicatorComponent,
+        ToDoCreateItemComponent,
     ],
     templateUrl: './to-do.page.component.html',
     styleUrl: './to-do.page.component.scss',
 })
 export class ToDoPageComponent implements OnInit {
-    private fb: FormBuilder = inject(FormBuilder);
     private toastService = inject(ToastService);
     private toDoService = inject(ToDoService);
+    
+    protected filteredTasks = computed(() => {
+        const tasks = this.tasks();
+        const status = this.selectedStatus();
 
-    protected tasks = this.toDoService.tasks;
+        return status === null ? tasks : tasks.filter(task => task.status === status);
+    });
     protected isLoading: WritableSignal<boolean> = signal(true);
-    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.tasks().length);
+    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.filteredTasks().length);
     protected viewItemId: WritableSignal<number | null> = signal(null); 
     protected viewItem: Signal<Task | null> = computed(() => this.tasks().find(item => item.id === this.viewItemId()) || null);
-    protected form: FormGroup<ToDoForm> = this.fb.group({
-        taskName: ['', [Validators.required, noWhitespaceValidator]],
-        taskDescription: [''],
-    });
     protected selectedIds: WritableSignal<Set<number>> = signal(new Set([]));
     protected selectedCount = computed(() => this.selectedIds().size);
+    protected selectedStatus: WritableSignal<TaskStatus | null> = signal(null);
+    protected taskStatuses = [
+        {value: TASK_STATUS.NEW, viewValue: 'New'},
+        {value: TASK_STATUS.INPROGRESS, viewValue: 'In progress'},
+        {value: TASK_STATUS.COMPLETED, viewValue: 'Completed'},
+    ];
 
-    protected typesButton = TYPES_BUTTON;
-    protected taskStatus = TASK_STATUS;
+    protected TASK_STATUS = TASK_STATUS;
+
+    private tasks = this.toDoService.tasks;
 
     ngOnInit(): void {
         setTimeout(() => {
@@ -102,25 +102,17 @@ export class ToDoPageComponent implements OnInit {
         });
     }
 
-    protected onSubmitToDoForm() {
-        const { taskName, taskDescription } = this.form.value;
-
-        if (!taskName) {
-            return;
-        }
+    protected onHandlerCreateItemSubmit(nTask: Omit<Task, 'id' | 'status'>): void {
+        const { text, description } = nTask;
 
         this.toDoService.addTask({
-            text: taskName,
-            description: taskDescription || '',
+            text, description
         });
-        // покачто ошибок нет чисто удача
 
         this.toastService.show({
-            text: `Task created - "${taskName}"`,
+            text: `Task created - "${text}"`,
             type: TYPES_TOAST.SUCCESS,
         });
-
-        this.form.reset();
     }
 
     protected onCloseDetails() {

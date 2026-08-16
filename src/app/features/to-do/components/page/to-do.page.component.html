@@ -2,16 +2,24 @@
     <section class="app-to-do-list">
         <h1>Todo List</h1>
 
-        <!-- <div class="app-to-do-list__filters">
-            FILTERS
-        </div> -->
+        <div class="app-to-do-list__filters">
+            <mat-form-field>
+                <mat-label>Task status</mat-label>
+                <mat-select [(value)]="selectedStatus">
+                    <mat-option [value]="null"></mat-option>
+                    @for (status of taskStatuses; track status) {
+                    <mat-option [value]="status.value">{{ status.viewValue }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
 
         <div class="app-to-do-list__cont" [class.app-to-do-list__cont_empty-loader]="isEmptyOrLoading()">
             @if (isLoading()) {
                 <app-loading-indicator></app-loading-indicator>
-            } @else if (tasks().length) {
+            } @else if (filteredTasks().length) {
                 <ul class="app-to-do-list__items">
-                    @for (item of tasks(); track item.id) {
+                    @for (item of filteredTasks(); track item.id) {
                         <li>
                             <app-to-do-item [data]="item"
                                             [isView]="viewItemId() === item.id"
@@ -25,7 +33,7 @@
                     }
                 </ul>
             } @else {
-                <p>Список пуст. Добавьте задачу</p>
+                <p class="app-to-do-list__empty-message">Список пуст. Добавьте задачу или измените статус существующих</p>
             }
         </div>
 
@@ -33,48 +41,27 @@
             <button app-button
                     class="app-button_new"
                     [disabled]="selectedCount() < 1"
-                    (click)="onStatusChange(taskStatus.NEW)"
+                    (click)="onStatusChange(TASK_STATUS.NEW)"
                     appTooltip="Установить статус NEW"
                     [appTooltipIsDisabled]="selectedCount() < 1">NEW
             </button>
             <button app-button
                     class="app-button_inprogress"
                     [disabled]="selectedCount() < 1"
-                    (click)="onStatusChange(taskStatus.INPROGRESS)"
+                    (click)="onStatusChange(TASK_STATUS.INPROGRESS)"
                     appTooltip="Установить статус In progress"
                     [appTooltipIsDisabled]="selectedCount() < 1">In progress
             </button>
             <button app-button
                     class="app-button_completed"
                     [disabled]="selectedCount() < 1"
-                    (click)="onStatusChange(taskStatus.COMPLETED)"
+                    (click)="onStatusChange(TASK_STATUS.COMPLETED)"
                     appTooltip="Установить статус Completed"
                     [appTooltipIsDisabled]="selectedCount() < 1">Completed
             </button>
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmitToDoForm()" class="app-to-do-list__form">
-            <div class="app-to-do-list__fields">
-                <mat-form-field class="app-to-do-list__field">
-                    <mat-label>Todo name</mat-label>
-                    <input name="taskName"
-                        matInput
-                        type="text"
-                        placeholder="Enter text..."
-                        [formControl]="form.controls.taskName">
-                </mat-form-field>
-                <mat-form-field class="app-to-do-list__field">
-                    <mat-label>Leave a description</mat-label>
-                    <input name="taskDescription" matInput type="text" placeholder="Enter text..." [formControl]="form.controls.taskDescription">
-                </mat-form-field>
-            </div>
-            <button app-button
-                    [appButtonType]="typesButton.ADD"
-                    [disabled]="form.invalid"
-                    appTooltip="Добавить задачу"
-                    [appTooltipIsDisabled]="form.invalid">Add task
-            </button>
-        </form>
+        <app-to-do-create-item (createItemSubmit)="onHandlerCreateItemSubmit($event)"></app-to-do-create-item>
     </section>
 
     @if (viewItemId()) {
