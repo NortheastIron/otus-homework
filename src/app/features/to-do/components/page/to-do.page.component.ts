@@ -44,11 +44,11 @@ export class ToDoPageComponent implements OnInit {
 
         return status === null ? tasks : tasks.filter(task => task.status === status);
     });
-    protected isLoading: WritableSignal<boolean> = signal(true);
+    protected isLoading: Signal<boolean> = this.toDoService.isLoading;
     protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.filteredTasks().length);
-    protected viewItemId: WritableSignal<number | null> = signal(null); 
+    protected viewItemId: WritableSignal<string | null> = signal(null); 
     protected viewItem: Signal<Task | null> = computed(() => this.tasks().find(item => item.id === this.viewItemId()) || null);
-    protected selectedIds: WritableSignal<Set<number>> = signal(new Set([]));
+    protected selectedIds: WritableSignal<Set<string>> = signal(new Set([]));
     protected selectedCount = computed(() => this.selectedIds().size);
     protected selectedStatus: WritableSignal<TaskStatus | null> = signal(null);
     protected taskStatuses = [
@@ -62,9 +62,7 @@ export class ToDoPageComponent implements OnInit {
     private tasks = this.toDoService.tasks;
 
     ngOnInit(): void {
-        setTimeout(() => {
-            this.isLoading.set(false);
-        }, 500);
+        this.toDoService.loadTasks();
 
         this.toastService.show({
             text: 'ToDo page WELCOME',
@@ -72,23 +70,34 @@ export class ToDoPageComponent implements OnInit {
         });
     }
 
-    protected onHandlerItemDelete(id: number): void {
+    protected onHandlerItemDelete(id: string): void {
         if (this.viewItemId() === id) {
             this.viewItemId.set(null);
         }
-        this.toDoService.removeTask(id);
 
-        this.toastService.show({
-            text: `Task deleted`,
-            type: TYPES_TOAST.SUCCESS,
+        this.toDoService.removeTask(id).subscribe({
+            next: (deletedTask) => {
+                this.toastService.show({
+                    text: `Task "${deletedTask.text}" deleted`,
+                    type: TYPES_TOAST.SUCCESS,
+                });
+            },
+            error: (err) => {
+                console.error(err);
+
+                this.toastService.show({
+                    text: `Task delete error`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            }
         });
     }
     
-    protected onHandlerItemClicked(id: number): void {
+    protected onHandlerItemClicked(id: string): void {
         this.viewItemId.set(id);
     }
 
-    protected onHandlerItemCheckboxChanged(id: number): void {
+    protected onHandlerItemCheckboxChanged(id: string): void {
         this.selectedIds.update(set => {
             const nSet = new Set(set);
 
@@ -107,12 +116,24 @@ export class ToDoPageComponent implements OnInit {
 
         this.toDoService.addTask({
             text, description
+        }).subscribe({
+            next: (addedTask) => {
+                this.toastService.show({
+                    text: `Task created - "${addedTask.text}"`,
+                    type: TYPES_TOAST.SUCCESS,
+                });
+            },
+            error: (err) => {
+                console.error(err);
+
+                this.toastService.show({
+                    text: `Task creation error`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            }
         });
 
-        this.toastService.show({
-            text: `Task created - "${text}"`,
-            type: TYPES_TOAST.SUCCESS,
-        });
+        
     }
 
     protected onCloseDetails() {
@@ -120,21 +141,48 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onHandlerItemSaveEdit(task: Task) {
-        this.toDoService.updateTask(task);
-        this.toastService.show({
-            text: `Task updated! - "${task.text}"`,
-            type: TYPES_TOAST.SUCCESS,
+        this.toDoService.updateTask(task).subscribe({
+            next: (updatedTask) => {
+                this.toastService.show({
+                    text: `Task updated - "${updatedTask.text}"`,
+                    type: TYPES_TOAST.SUCCESS,
+                });
+            },
+            error: (err) => {
+                console.error(err);
+
+                this.toastService.show({
+                    text: `Task update error`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            }
         });
     }
 
     protected onStatusChange(status: TaskStatus) {
-        this.toDoService.updateStatus(status, [...this.selectedIds().values()]);
+        this.toDoService.updateStatus(status, [...this.selectedIds().values()]).subscribe(res => {
+            const successArr = res.filter(item => item.success);
+
+            if (successArr.length === res.length) {
+                this.toastService.show({
+                    text: `Status updated`,
+                    type: TYPES_TOAST.SUCCESS,
+                });
+            } else if (successArr.length > 0) {
+                this.toastService.show({
+                    text: `Status partially updated`,
+                    type: TYPES_TOAST.WARNING,
+                });
+            } else {
+                this.toastService.show({
+                    text: `Status not updated`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            }
+        });
+
         this.selectedIds.update(() => {
             return new Set();
-        });
-        this.toastService.show({
-            text: `Status updated`,
-            type: TYPES_TOAST.SUCCESS,
         });
     }
 }

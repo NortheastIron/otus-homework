@@ -28,8 +28,8 @@ type ToDoForm = {
     templateUrl: './to-do.create-item.component.html',
     styleUrl: './to-do.create-item.component.scss',
     host: {
-        class: 'app-to-do-create-item'
-    }
+        class: 'app-to-do-create-item',
+    },
 })
 export class ToDoCreateItemComponent {
     private fb: FormBuilder = inject(FormBuilder);

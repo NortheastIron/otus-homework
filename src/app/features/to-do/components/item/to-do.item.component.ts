@@ -36,10 +36,10 @@ export class ToDoItemComponent {
     public isSelect: InputSignal<boolean> = input.required();
     public isView: InputSignal<boolean> = input.required();
 
-    public itemDelete: OutputEmitterRef<number> = output();
-    public itemCheckboxChanged: OutputEmitterRef<number> = output();
+    public itemDelete: OutputEmitterRef<string> = output();
+    public itemCheckboxChanged: OutputEmitterRef<string> = output();
     public itemSaveEdit: OutputEmitterRef<Task> = output();
-    public itemClicked: OutputEmitterRef<number> = output();
+    public itemClicked: OutputEmitterRef<string> = output();
 
     protected typesButton = TYPES_BUTTON;
     protected taskStatus = TASK_STATUS;

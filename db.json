@@ -1,0 +1,11 @@
+{
+  "tasks": [
+    {
+      "text": "First test task",
+      "description": "",
+      "status": "INPROGRESS",
+      "id": "XqL0gS1DQoA"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

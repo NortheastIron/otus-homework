@@ -18,7 +18,7 @@ describe('Item', () => {
             bindings: [
                 inputBinding('isSelect', () => true),
                 inputBinding('isView', () => false),
-                inputBinding('data', () => ({id: 1, text: 'test', description: 'test'})),
+                inputBinding('data', () => ({id: '1', text: 'test', description: 'test', status: 'NEW'})),
             ],
         });
         component = fixture.componentInstance;
