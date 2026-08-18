@@ -20,18 +20,18 @@ describe('ToDoService', () => {
         service.addTask({text: '2', description: '2'});
         expect(service.tasks().length).toBe(2);
         
-        const newItem = service.tasks().find(item => item.id === 2);
+        const newItem = service.tasks().find(item => item.id === '2');
         expect(newItem).toBeTruthy();
     });
 
     it('should remove and length 0', () => {
-        service.removeTask(1);
+        service.removeTask('1');
         expect(service.tasks().length).toBe(0);
     });
 
     it('should update task', () => {
         service.updateTask({
-            id: 1,
+            id: '1',
             text: 'FirstNew',
             description: 'DescriptionNew',
             status: TASK_STATUS.NEW,
@@ -39,7 +39,7 @@ describe('ToDoService', () => {
 
         expect(service.tasks()).toEqual([
             {
-                id: 1,
+                id: '1',
                 text: 'FirstNew',
                 description: 'DescriptionNew',
                 status: TASK_STATUS.NEW,

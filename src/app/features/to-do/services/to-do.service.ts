@@ -42,9 +42,9 @@ export class ToDoService {
                 next: (nTask) => {
                     this._tasks.update((items: Task[]) => [
                         ...items,
-                        nTask
+                        nTask,
                     ]);
-                }
+                },
             }),
             finalize(() => {
                 this._isLoading.set(false);
@@ -57,7 +57,7 @@ export class ToDoService {
 
         return this.http.delete<Task>(`${this.apiUrl}/${id}`).pipe(
             tap({
-                next: (_task) => this._tasks.update(items => items.filter(item => item.id !== id))
+                next: () => this._tasks.update(items => items.filter(item => item.id !== id)),
             }),
             finalize(() => {
                 this._isLoading.set(false);
@@ -70,7 +70,7 @@ export class ToDoService {
 
         return this.http.put<Task>(`${this.apiUrl}/${task.id}`, task).pipe(
             tap({
-                next: () => this._tasks.update(items => items.map(item => item.id === task.id ? { ...task } : item))
+                next: () => this._tasks.update(items => items.map(item => item.id === task.id ? { ...task } : item)),
             }),
             finalize(() => {
                 this._isLoading.set(false);

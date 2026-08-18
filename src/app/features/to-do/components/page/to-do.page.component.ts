@@ -89,7 +89,7 @@ export class ToDoPageComponent implements OnInit {
                     text: `Task delete error`,
                     type: TYPES_TOAST.ERROR,
                 });
-            }
+            },
         });
     }
     
@@ -115,7 +115,7 @@ export class ToDoPageComponent implements OnInit {
         const { text, description } = nTask;
 
         this.toDoService.addTask({
-            text, description
+            text, description,
         }).subscribe({
             next: (addedTask) => {
                 this.toastService.show({
@@ -130,7 +130,7 @@ export class ToDoPageComponent implements OnInit {
                     text: `Task creation error`,
                     type: TYPES_TOAST.ERROR,
                 });
-            }
+            },
         });
 
         
@@ -155,7 +155,7 @@ export class ToDoPageComponent implements OnInit {
                     text: `Task update error`,
                     type: TYPES_TOAST.ERROR,
                 });
-            }
+            },
         });
     }
 
