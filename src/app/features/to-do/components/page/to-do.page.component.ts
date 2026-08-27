@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -17,6 +17,8 @@ import { Task, TaskStatus } from '@features/to-do/types';
 import { ToDoService } from '@features/to-do/services';
 import { TASK_STATUS } from '@features/to-do/constants';
 import { ToDoCreateItemComponent } from '@features/to-do/components/create-item';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-to-do-page',
@@ -37,6 +39,7 @@ import { ToDoCreateItemComponent } from '@features/to-do/components/create-item'
 export class ToDoPageComponent implements OnInit {
     private toastService = inject(ToastService);
     private toDoService = inject(ToDoService);
+    private destroyRef = inject(DestroyRef);
     
     protected filteredTasks = computed(() => {
         const tasks = this.tasks();
@@ -44,10 +47,12 @@ export class ToDoPageComponent implements OnInit {
 
         return status === null ? tasks : tasks.filter(task => task.status === status);
     });
-    protected isLoading: Signal<boolean> = this.toDoService.isLoading;
+    protected isLoadingTasks: Signal<boolean> = this.toDoService.isLoadingTasks;
+    protected isLocalLoading: WritableSignal<boolean> = signal(false);
+    protected isLoading: Signal<boolean> = computed(() => this.isLoadingTasks() || this.isLocalLoading());
     protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.filteredTasks().length);
     protected viewItemId: WritableSignal<string | null> = signal(null); 
-    protected viewItem: Signal<Task | null> = computed(() => this.tasks().find(item => item.id === this.viewItemId()) || null);
+    protected viewItem: Signal<Task | null> = computed(() => this.filteredTasks().find(item => item.id === this.viewItemId()) || null);
     protected selectedIds: WritableSignal<Set<string>> = signal(new Set([]));
     protected selectedCount = computed(() => this.selectedIds().size);
     protected selectedStatus: WritableSignal<TaskStatus | null> = signal(null);
@@ -56,13 +61,27 @@ export class ToDoPageComponent implements OnInit {
         {value: TASK_STATUS.INPROGRESS, viewValue: 'In progress'},
         {value: TASK_STATUS.COMPLETED, viewValue: 'Completed'},
     ];
+    protected errorMessage: WritableSignal<string> = signal('');
 
     protected TASK_STATUS = TASK_STATUS;
 
     private tasks = this.toDoService.tasks;
 
     ngOnInit(): void {
-        this.toDoService.loadTasks();
+        this.toDoService.loadTasks().pipe(
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe({
+            error: (err) => {
+                console.error(err);
+
+                this.errorMessage.set(err.message || 'Произошла ошибка в загрузке данных');
+
+                this.toastService.show({
+                    text: `Tasks loading error`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            }
+        });
 
         this.toastService.show({
             text: 'ToDo page WELCOME',
@@ -71,12 +90,23 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onHandlerItemDelete(id: string): void {
-        if (this.viewItemId() === id) {
-            this.viewItemId.set(null);
-        }
+        this.isLocalLoading.set(true);
 
-        this.toDoService.removeTask(id).subscribe({
+        this.toDoService.removeTask(id).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLocalLoading.set(false);
+            }),
+        ).subscribe({
             next: (deletedTask) => {
+                if (this.viewItemId() === id) {
+                    this.viewItemId.set(null);
+                }
+
+                if (this.selectedIds().has(id)) {
+                    this.updateSelectedIds(id);
+                }
+
                 this.toastService.show({
                     text: `Task "${deletedTask.text}" deleted`,
                     type: TYPES_TOAST.SUCCESS,
@@ -98,25 +128,22 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onHandlerItemCheckboxChanged(id: string): void {
-        this.selectedIds.update(set => {
-            const nSet = new Set(set);
-
-            if (nSet.has(id)) {
-                nSet.delete(id);
-            } else {
-                nSet.add(id);
-            }
-
-            return nSet;
-        });
+        this.updateSelectedIds(id);
     }
 
     protected onHandlerCreateItemSubmit(nTask: Omit<Task, 'id' | 'status'>): void {
         const { text, description } = nTask;
 
+        this.isLocalLoading.set(true);
+
         this.toDoService.addTask({
             text, description,
-        }).subscribe({
+        }).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLocalLoading.set(false);
+            }),
+        ).subscribe({
             next: (addedTask) => {
                 this.toastService.show({
                     text: `Task created - "${addedTask.text}"`,
@@ -132,8 +159,6 @@ export class ToDoPageComponent implements OnInit {
                 });
             },
         });
-
-        
     }
 
     protected onCloseDetails() {
@@ -141,7 +166,14 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onHandlerItemSaveEdit(task: Task) {
-        this.toDoService.updateTask(task).subscribe({
+        this.isLocalLoading.set(true);
+
+        this.toDoService.updateTask(task).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLocalLoading.set(false);
+            }),
+        ).subscribe({
             next: (updatedTask) => {
                 this.toastService.show({
                     text: `Task updated - "${updatedTask.text}"`,
@@ -160,15 +192,25 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onStatusChange(status: TaskStatus) {
-        this.toDoService.updateStatus(status, [...this.selectedIds().values()]).subscribe(res => {
+        this.isLocalLoading.set(true);
+
+        this.toDoService.updateStatus(status, [...this.selectedIds().values()]).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLocalLoading.set(false);
+            }),
+        ).subscribe(res => {
             const successArr = res.filter(item => item.success);
 
             if (successArr.length === res.length) {
+                this.selectedIds.set(new Set());
                 this.toastService.show({
                     text: `Status updated`,
                     type: TYPES_TOAST.SUCCESS,
                 });
             } else if (successArr.length > 0) {
+                const successIds = successArr.map(item => item.id);
+                this.deleteIdsFromSelectedIds(successIds);
                 this.toastService.show({
                     text: `Status partially updated`,
                     type: TYPES_TOAST.WARNING,
@@ -180,9 +222,58 @@ export class ToDoPageComponent implements OnInit {
                 });
             }
         });
+    }
 
-        this.selectedIds.update(() => {
-            return new Set();
+    protected onSelectionStatusChange() {
+        if (this.viewItemId() && this.viewItem() === null) {
+            this.viewItemId.set(null);
+        }
+
+        const selected = this.selectedIds();
+
+        if (selected.size) {
+            const filteredTasksIdsSet = new Set(this.filteredTasks().map(task => task.id));
+            const extraIds: string[] = [];
+
+            for (const id of selected) {
+                if (!filteredTasksIdsSet.has(id)) {
+                    extraIds.push(id);
+                }
+            }
+
+            if (extraIds.length) {
+                if (extraIds.length === selected.size) {
+                    this.selectedIds.set(new Set());
+                } else {
+                    this.deleteIdsFromSelectedIds(extraIds);
+                }
+            }
+        }
+    }
+
+    private updateSelectedIds(id: string): void {
+        this.selectedIds.update(set => {
+            const nSet = new Set(set);
+
+            if (nSet.has(id)) {
+                nSet.delete(id);
+            } else {
+                nSet.add(id);
+            }
+
+            return nSet;
+        });
+    }
+
+    private deleteIdsFromSelectedIds(ids: string[]): void {
+        this.selectedIds.update(set => {
+            const nSet = new Set(set);
+
+            for (const id of ids) {
+                nSet.delete(id);
+            }
+
+            return nSet;
         });
     }
 }

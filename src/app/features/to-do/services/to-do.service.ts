@@ -3,7 +3,7 @@ import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Task, TaskStatus } from '@features/to-do/types';
 import { TASK_STATUS } from '@features/to-do/constants';
 import { HttpClient } from '@angular/common/http';
-import { catchError, finalize, from, map, mergeMap, Observable, of, tap, toArray } from 'rxjs';
+import { catchError, finalize, first, from, map, mergeMap, Observable, of, tap, toArray } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -13,30 +13,30 @@ export class ToDoService {
 
     private apiUrl = '/api/tasks';
     private _tasks: WritableSignal<Task[]> = signal([]);
-    private _isLoading: WritableSignal<boolean> = signal(false);
+    private _isLoadingTasks: WritableSignal<boolean> = signal(false);
 
     public readonly tasks = this._tasks.asReadonly();
-    public readonly isLoading = this._isLoading.asReadonly();
+    public readonly isLoadingTasks = this._isLoadingTasks.asReadonly();
 
-    public loadTasks(): void {
-        this._isLoading.set(true);
+    public loadTasks(): Observable<Task[]> {
+        this._isLoadingTasks.set(true);
 
-        this.http.get<Task[]>(this.apiUrl).pipe(
-            catchError(() => of([])),
-            finalize(() => {
-                this._isLoading.set(false);
+        return this.http.get<Task[]>(this.apiUrl).pipe(
+            tap({
+                next: (tasks) => this._tasks.set(tasks)
             }),
-        ).subscribe(tasks => this._tasks.set(tasks));
+            first(),
+            finalize(() => {
+                this._isLoadingTasks.set(false);
+            }),
+        );
     }
 
     public addTask(task: Omit<Task, 'id' | 'status'>): Observable<Task> {
-        this._isLoading.set(true);
-
         return this.http.post<Task>(this.apiUrl, {
             text: task.text.trim(),
             description: task.description.trim(),
             status: TASK_STATUS.NEW,
-            id: crypto.randomUUID(),
         }).pipe(
             tap({
                 next: (nTask) => {
@@ -46,41 +46,29 @@ export class ToDoService {
                     ]);
                 },
             }),
-            finalize(() => {
-                this._isLoading.set(false);
-            }),
+            first(),
         );
     }
 
     public removeTask(id: string): Observable<Task> {
-        this._isLoading.set(true);
-
         return this.http.delete<Task>(`${this.apiUrl}/${id}`).pipe(
             tap({
                 next: () => this._tasks.update(items => items.filter(item => item.id !== id)),
             }),
-            finalize(() => {
-                this._isLoading.set(false);
-            }),
+            first(),
         );
     }
 
     public updateTask(task: Task): Observable<Task> {
-        this._isLoading.set(true);
-
         return this.http.put<Task>(`${this.apiUrl}/${task.id}`, task).pipe(
             tap({
                 next: () => this._tasks.update(items => items.map(item => item.id === task.id ? { ...task } : item)),
             }),
-            finalize(() => {
-                this._isLoading.set(false);
-            }),
+            first(),
         );
     }
 
     public updateStatus(status: TaskStatus, ids: string[]): Observable<{ success: boolean, id: string }[]> {
-        this._isLoading.set(true);
-
         return from(ids).pipe(
             mergeMap(id => this.http.patch<Task>(`${this.apiUrl}/${id}`, { status }).pipe(
                 map(task => ({ success: true, id: task.id})),
@@ -93,9 +81,6 @@ export class ToDoService {
             tap(res => {
                 const successIdsArr = res.filter(item => item.success).map(item => item.id);
                 this._tasks.update(items => items.map(item => successIdsArr.includes(item.id) ? { ...item, status } : item));
-            }),
-            finalize(() => {
-                this._isLoading.set(false);
             }),
         );
     }

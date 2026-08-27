@@ -5,9 +5,9 @@
         <div class="app-to-do-list__filters">
             <mat-form-field>
                 <mat-label>Task status</mat-label>
-                <mat-select [(value)]="selectedStatus">
-                    <mat-option [value]="null"></mat-option>
-                    @for (status of taskStatuses; track status) {
+                <mat-select [(value)]="selectedStatus" (selectionChange)="onSelectionStatusChange()">
+                    <mat-option [value]="null">All tasks</mat-option>
+                    @for (status of taskStatuses; track $index) {
                     <mat-option [value]="status.value">{{ status.viewValue }}</mat-option>
                     }
                 </mat-select>
@@ -33,7 +33,9 @@
                     }
                 </ul>
             } @else {
-                <p class="app-to-do-list__empty-message">Список пуст. Добавьте задачу или измените статус существующих</p>
+                <p class="app-to-do-list__empty-message">
+                    {{ errorMessage() || 'Список пуст. Добавьте задачу или измените статус существующих' }}
+                </p>
             }
         </div>
 
