@@ -2,16 +2,30 @@
     <section class="app-to-do-list">
         <h1>Todo List</h1>
 
+        <div class="app-to-do-list__filters">
+            <mat-form-field>
+                <mat-label>Task status</mat-label>
+                <mat-select [(value)]="selectedStatus" (selectionChange)="onSelectionStatusChange()">
+                    <mat-option [value]="null">All tasks</mat-option>
+                    @for (status of taskStatuses; track $index) {
+                    <mat-option [value]="status.value">{{ status.viewValue }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+
         <div class="app-to-do-list__cont" [class.app-to-do-list__cont_empty-loader]="isEmptyOrLoading()">
             @if (isLoading()) {
-                <span class="app-loader"></span>
-            } @else if (tasks().length) {
+                <app-loading-indicator></app-loading-indicator>
+            } @else if (filteredTasks().length) {
                 <ul class="app-to-do-list__items">
-                    @for (item of tasks(); track item.id) {
+                    @for (item of filteredTasks(); track item.id) {
                         <li>
                             <app-to-do-item [data]="item"
-                                            [isSelected]="selectedItemId() === item.id"
-                                            (itemSelect)="onHandlerItemSelected($event)"
+                                            [isView]="viewItemId() === item.id"
+                                            [isSelect]="selectedIds().has(item.id)"
+                                            (itemClicked)="onHandlerItemClicked($event)"
+                                            (itemCheckboxChanged)="onHandlerItemCheckboxChanged($event)"
                                             (itemDelete)="onHandlerItemDelete($event)"
                                             (itemSaveEdit)="onHandlerItemSaveEdit($event)">
                             </app-to-do-item>
@@ -19,42 +33,47 @@
                     }
                 </ul>
             } @else {
-                <p>Список пуст. Добавьте задачу</p>
+                <p class="app-to-do-list__empty-message">
+                    {{ errorMessage() || 'Список пуст. Добавьте задачу или измените статус существующих' }}
+                </p>
             }
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmitToDoForm()" class="app-to-do-list__form">
-            <div class="app-to-do-list__fields">
-                <mat-form-field class="app-to-do-list__field">
-                    <mat-label>Todo name</mat-label>
-                    <input name="taskName"
-                        matInput
-                        type="text"
-                        placeholder="Enter text..."
-                        [formControl]="form.controls.taskName">
-                </mat-form-field>
-                <mat-form-field class="app-to-do-list__field">
-                    <mat-label>Leave a description</mat-label>
-                    <input name="taskDescription" matInput type="text" placeholder="Enter text..." [formControl]="form.controls.taskDescription">
-                </mat-form-field>
-            </div>
-            <button app-button-title="Add task"
-                    [appButtonType]="typesButton.ADD"
-                    [disabled]="form.invalid"
-                    appTooltip="Добавить задачу"
-                    [appTooltipIsDisabled]="form.invalid">Add task!
+        <div class="app-to-do-list__status-management">
+            <button app-button
+                    class="app-button_new"
+                    [disabled]="selectedCount() < 1"
+                    (click)="onStatusChange(TASK_STATUS.NEW)"
+                    appTooltip="Установить статус NEW"
+                    [appTooltipIsDisabled]="selectedCount() < 1">NEW
             </button>
-        </form>
+            <button app-button
+                    class="app-button_inprogress"
+                    [disabled]="selectedCount() < 1"
+                    (click)="onStatusChange(TASK_STATUS.INPROGRESS)"
+                    appTooltip="Установить статус In progress"
+                    [appTooltipIsDisabled]="selectedCount() < 1">In progress
+            </button>
+            <button app-button
+                    class="app-button_completed"
+                    [disabled]="selectedCount() < 1"
+                    (click)="onStatusChange(TASK_STATUS.COMPLETED)"
+                    appTooltip="Установить статус Completed"
+                    [appTooltipIsDisabled]="selectedCount() < 1">Completed
+            </button>
+        </div>
+
+        <app-to-do-create-item (createItemSubmit)="onHandlerCreateItemSubmit($event)"></app-to-do-create-item>
     </section>
 
-    @if (selectedItemId()) {
+    @if (viewItemId()) {
         <section class="app-to-do-details">
             <div class="app-to-do-details__header">
-                <h2 class="app-to-do-details__title">{{this.selectedItem()?.text}}</h2>
+                <h2 class="app-to-do-details__title">{{this.viewItem()?.text}}</h2>
                 <button app-icon-button-class="CANCEL" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
             </div>
             
-            <div class="app-to-do-details__description">{{this.selectedItem()?.description}}</div>
+            <div class="app-to-do-details__description">{{this.viewItem()?.description}}</div>
         </section>
     }
 

@@ -1,4 +1,6 @@
 .app-to-do-page {
+    width: 100%;
+    height: 100%;
     display: flex;
     gap: 20px;
 }
@@ -12,7 +14,7 @@
     box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
 
     &__cont {
-        height: 300px;
+        flex: 1 1 auto;
         overflow-y: auto;
         scrollbar-gutter: stable;
         margin-right: -16px;
@@ -26,6 +28,10 @@
         }
     }
 
+    &__empty-message {
+        text-align: center;
+    }
+
     &__items {
         list-style-type: none;
         display: flex;
@@ -33,25 +39,23 @@
         gap: 5px;
     }
 
-    &__form {
+    &__status-management {
         display: flex;
-        justify-content: space-between;
-        gap: 20px;
+        gap: 5px;
 
-        --mat-form-field-container-height: 56px;
+        .app-button {
+            &_new {
+                --app-button-background-color: blue;
+            }
 
-        .app-to-do-list__fields {
-            flex: 1 1 auto;
+            &_inprogress {
+                --app-button-background-color: rgb(255, 157, 0);
+            }
+
+            &_completed {
+                --app-button-background-color: green;
+            }
         }
-
-        .app-button_add {
-            height: var(--mat-form-field-container-height);
-        }
-    }
-
-    &__fields {
-        display: flex;
-        flex-direction: column;
     }
 }
 
@@ -87,24 +91,5 @@
         overflow-y: auto;
         scrollbar-gutter: stable;
         margin-right: -16px;
-    }
-}
-
-.app-loader {
-    width: 48px;
-    height: 48px;
-    border: 5px solid #2450af;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    animation: rotation 1s linear infinite;
-
-    @keyframes rotation {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
     }
 }

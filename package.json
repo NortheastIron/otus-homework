@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "json-server": "json-server --watch db.json"
   },
   "private": true,
   "packageManager": "npm@10.9.2",
@@ -32,6 +33,7 @@
     "angular-eslint": "21.4.0",
     "eslint": "^10.3.0",
     "jsdom": "^28.0.0",
+    "json-server": "^1.0.0-beta.15",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "typescript-eslint": "8.59.2",

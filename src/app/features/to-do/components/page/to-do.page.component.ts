@@ -1,64 +1,87 @@
-import { Component, computed, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, DestroyRef, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
-import { noWhitespaceValidator } from '@core';
+import { MatSelectModule } from '@angular/material/select';
 
 import {
     ButtonComponent,
     IconButtonComponent,
-    TYPES_BUTTON,
+    LoadingIndicatorComponent,
 } from '@shared';
 
 import { ToastService, TYPES_TOAST } from '@common/toasts'
 import { TooltipDirective } from '@common/tooltip';
 
 import { ToDoItemComponent } from '@features/to-do/components/item';
-import { Task } from '@features/to-do/types';
+import { Task, TaskStatus } from '@features/to-do/types';
 import { ToDoService } from '@features/to-do/services';
-
-
-type ToDoForm = {
-    taskName: FormControl<string | null>;
-    taskDescription: FormControl<string | null>;
-}
+import { TASK_STATUS } from '@features/to-do/constants';
+import { ToDoCreateItemComponent } from '@features/to-do/components/create-item';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-to-do-page',
     imports: [
-        ReactiveFormsModule,
         MatFormFieldModule,
         MatInputModule,
+        MatSelectModule,
         ToDoItemComponent,
         ButtonComponent,
         TooltipDirective,
         IconButtonComponent,
+        LoadingIndicatorComponent,
+        ToDoCreateItemComponent,
     ],
     templateUrl: './to-do.page.component.html',
     styleUrl: './to-do.page.component.scss',
 })
 export class ToDoPageComponent implements OnInit {
-    private fb: FormBuilder = inject(FormBuilder);
     private toastService = inject(ToastService);
+    private toDoService = inject(ToDoService);
+    private destroyRef = inject(DestroyRef);
+    
+    protected filteredTasks = computed(() => {
+        const tasks = this.tasks();
+        const status = this.selectedStatus();
 
-    protected toDoService = inject(ToDoService);
-    protected tasks = this.toDoService.tasks;
-    protected isLoading: WritableSignal<boolean> = signal(true);
-    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.tasks().length);
-    protected selectedItemId: WritableSignal<number | null> = signal(null); 
-    protected selectedItem: Signal<Task | null> = computed(() => this.tasks().find(item => item.id === this.selectedItemId()) || null);
-    protected form: FormGroup<ToDoForm> = this.fb.group({
-        taskName: ['', [Validators.required, noWhitespaceValidator]],
-        taskDescription: [''],
+        return status === null ? tasks : tasks.filter(task => task.status === status);
     });
+    protected isLoadingTasks: Signal<boolean> = this.toDoService.isLoadingTasks;
+    protected isLocalLoading: WritableSignal<boolean> = signal(false);
+    protected isLoading: Signal<boolean> = computed(() => this.isLoadingTasks() || this.isLocalLoading());
+    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.filteredTasks().length);
+    protected viewItemId: WritableSignal<string | null> = signal(null); 
+    protected viewItem: Signal<Task | null> = computed(() => this.filteredTasks().find(item => item.id === this.viewItemId()) || null);
+    protected selectedIds: WritableSignal<Set<string>> = signal(new Set([]));
+    protected selectedCount = computed(() => this.selectedIds().size);
+    protected selectedStatus: WritableSignal<TaskStatus | null> = signal(null);
+    protected taskStatuses = [
+        {value: TASK_STATUS.NEW, viewValue: 'New'},
+        {value: TASK_STATUS.INPROGRESS, viewValue: 'In progress'},
+        {value: TASK_STATUS.COMPLETED, viewValue: 'Completed'},
+    ];
+    protected errorMessage: WritableSignal<string> = signal('');
 
-    protected typesButton = TYPES_BUTTON;
+    protected TASK_STATUS = TASK_STATUS;
+
+    private tasks = this.toDoService.tasks;
 
     ngOnInit(): void {
-        setTimeout(() => {
-            this.isLoading.set(false);
-        }, 500);
+        this.toDoService.loadTasks().pipe(
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe({
+            error: (err) => {
+                console.error(err);
+
+                this.errorMessage.set(err.message || 'Произошла ошибка в загрузке данных');
+
+                this.toastService.show({
+                    text: `Tasks loading error`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            }
+        });
 
         this.toastService.show({
             text: 'ToDo page WELCOME',
@@ -66,52 +89,191 @@ export class ToDoPageComponent implements OnInit {
         });
     }
 
-    protected onHandlerItemDelete(id: number): void {
-        if (this.selectedItemId() === id) {
-            this.selectedItemId.set(null);
-        }
-        this.toDoService.removeTask(id);
+    protected onHandlerItemDelete(id: string): void {
+        this.isLocalLoading.set(true);
 
-        this.toastService.show({
-            text: `Task deleted`,
-            type: TYPES_TOAST.SUCCESS,
+        this.toDoService.removeTask(id).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLocalLoading.set(false);
+            }),
+        ).subscribe({
+            next: (deletedTask) => {
+                if (this.viewItemId() === id) {
+                    this.viewItemId.set(null);
+                }
+
+                if (this.selectedIds().has(id)) {
+                    this.updateSelectedIds(id);
+                }
+
+                this.toastService.show({
+                    text: `Task "${deletedTask.text}" deleted`,
+                    type: TYPES_TOAST.SUCCESS,
+                });
+            },
+            error: (err) => {
+                console.error(err);
+
+                this.toastService.show({
+                    text: `Task delete error`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            },
         });
     }
     
-    protected onHandlerItemSelected(id: number): void {
-        this.selectedItemId.set(id);
+    protected onHandlerItemClicked(id: string): void {
+        this.viewItemId.set(id);
     }
 
-    protected onSubmitToDoForm() {
-        const { taskName, taskDescription } = this.form.value;
+    protected onHandlerItemCheckboxChanged(id: string): void {
+        this.updateSelectedIds(id);
+    }
 
-        if (!taskName) {
-            return;
-        }
+    protected onHandlerCreateItemSubmit(nTask: Omit<Task, 'id' | 'status'>): void {
+        const { text, description } = nTask;
+
+        this.isLocalLoading.set(true);
 
         this.toDoService.addTask({
-            text: taskName,
-            description: taskDescription || '',
-        });
-        // покачто ошибок нет чисто удача
+            text, description,
+        }).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLocalLoading.set(false);
+            }),
+        ).subscribe({
+            next: (addedTask) => {
+                this.toastService.show({
+                    text: `Task created - "${addedTask.text}"`,
+                    type: TYPES_TOAST.SUCCESS,
+                });
+            },
+            error: (err) => {
+                console.error(err);
 
-        this.toastService.show({
-            text: `Task created - "${taskName}"`,
-            type: TYPES_TOAST.SUCCESS,
+                this.toastService.show({
+                    text: `Task creation error`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            },
         });
-
-        this.form.reset();
     }
 
     protected onCloseDetails() {
-        this.selectedItemId.set(null);
+        this.viewItemId.set(null);
     }
 
     protected onHandlerItemSaveEdit(task: Task) {
-        this.toDoService.updateTask(task);
-        this.toastService.show({
-            text: `Task updated! - "${task.text}"`,
-            type: TYPES_TOAST.SUCCESS,
+        this.isLocalLoading.set(true);
+
+        this.toDoService.updateTask(task).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLocalLoading.set(false);
+            }),
+        ).subscribe({
+            next: (updatedTask) => {
+                this.toastService.show({
+                    text: `Task updated - "${updatedTask.text}"`,
+                    type: TYPES_TOAST.SUCCESS,
+                });
+            },
+            error: (err) => {
+                console.error(err);
+
+                this.toastService.show({
+                    text: `Task update error`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            },
+        });
+    }
+
+    protected onStatusChange(status: TaskStatus) {
+        this.isLocalLoading.set(true);
+
+        this.toDoService.updateStatus(status, [...this.selectedIds().values()]).pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => {
+                this.isLocalLoading.set(false);
+            }),
+        ).subscribe(res => {
+            const successArr = res.filter(item => item.success);
+
+            if (successArr.length === res.length) {
+                this.selectedIds.set(new Set());
+                this.toastService.show({
+                    text: `Status updated`,
+                    type: TYPES_TOAST.SUCCESS,
+                });
+            } else if (successArr.length > 0) {
+                const successIds = successArr.map(item => item.id);
+                this.deleteIdsFromSelectedIds(successIds);
+                this.toastService.show({
+                    text: `Status partially updated`,
+                    type: TYPES_TOAST.WARNING,
+                });
+            } else {
+                this.toastService.show({
+                    text: `Status not updated`,
+                    type: TYPES_TOAST.ERROR,
+                });
+            }
+        });
+    }
+
+    protected onSelectionStatusChange() {
+        if (this.viewItemId() && this.viewItem() === null) {
+            this.viewItemId.set(null);
+        }
+
+        const selected = this.selectedIds();
+
+        if (selected.size) {
+            const filteredTasksIdsSet = new Set(this.filteredTasks().map(task => task.id));
+            const extraIds: string[] = [];
+
+            for (const id of selected) {
+                if (!filteredTasksIdsSet.has(id)) {
+                    extraIds.push(id);
+                }
+            }
+
+            if (extraIds.length) {
+                if (extraIds.length === selected.size) {
+                    this.selectedIds.set(new Set());
+                } else {
+                    this.deleteIdsFromSelectedIds(extraIds);
+                }
+            }
+        }
+    }
+
+    private updateSelectedIds(id: string): void {
+        this.selectedIds.update(set => {
+            const nSet = new Set(set);
+
+            if (nSet.has(id)) {
+                nSet.delete(id);
+            } else {
+                nSet.add(id);
+            }
+
+            return nSet;
+        });
+    }
+
+    private deleteIdsFromSelectedIds(ids: string[]): void {
+        this.selectedIds.update(set => {
+            const nSet = new Set(set);
+
+            for (const id of ids) {
+                nSet.delete(id);
+            }
+
+            return nSet;
         });
     }
 }

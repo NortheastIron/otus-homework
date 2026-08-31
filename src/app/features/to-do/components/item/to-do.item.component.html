@@ -1,8 +1,20 @@
 <div class="app-to-do-item"
-     [class.app-to-do-item_selected]="isSelected()"
+     [class.app-to-do-item_view]="isView()"
      [class.app-to-do-item_edited]="isEdit()"
      appTooltip="Кликните для подробностей"
-     [appTooltipIsDisabled]="isEdit() || isSelected()">
+     [appTooltipIsDisabled]="isEdit() || isView()">
+    <input class="app-to-do-item__checkbox"
+           type="checkbox"
+           [checked]="isSelect()"
+           (change)="onCheckboxChanged()"
+           appTooltip="Кликните для изменения">
+    <div class="app-to-do-item__status"
+         [class]="{
+            'app-to-do-item__status_new' : data().status === taskStatus.NEW,
+            'app-to-do-item__status_inprogress' : data().status === taskStatus.INPROGRESS,
+            'app-to-do-item__status_completed' : data().status === taskStatus.COMPLETED,
+         }">
+    </div>
     @if (isEdit()) {
         <mat-form-field class="app-to-do-item__field">
             <mat-label>Todo name</mat-label>
@@ -31,5 +43,5 @@
     } @else {
         <span class="app-to-do-item__text">{{data().text}}</span>
     }
-    <button app-button-title="Delete" [appButtonType]="typesButton.DELETE" (click)="onRemove()" appTooltip="Удалить задачу">Delete</button>
+    <button app-button [appButtonType]="typesButton.DELETE" (click)="onRemove()" appTooltip="Удалить задачу">Delete</button>
 </div>

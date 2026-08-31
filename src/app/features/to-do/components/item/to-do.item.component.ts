@@ -11,6 +11,7 @@ import { ButtonComponent, IconButtonComponent, TYPES_BUTTON } from '@shared';
 import { TooltipDirective } from '@common';
 
 import { Task } from '@features/to-do/types';
+import { TASK_STATUS } from '@features/to-do/constants';
 
 
 @Component({
@@ -32,13 +33,16 @@ import { Task } from '@features/to-do/types';
 })
 export class ToDoItemComponent {
     public data: InputSignal<Task> = input.required();
-    public isSelected: InputSignal<boolean> = input.required();
+    public isSelect: InputSignal<boolean> = input.required();
+    public isView: InputSignal<boolean> = input.required();
 
-    public itemDelete: OutputEmitterRef<number> = output();
-    public itemSelect: OutputEmitterRef<number> = output();
+    public itemDelete: OutputEmitterRef<string> = output();
+    public itemCheckboxChanged: OutputEmitterRef<string> = output();
     public itemSaveEdit: OutputEmitterRef<Task> = output();
+    public itemClicked: OutputEmitterRef<string> = output();
 
     protected typesButton = TYPES_BUTTON;
+    protected taskStatus = TASK_STATUS;
     protected isEdit: WritableSignal<boolean> = signal(false);
 
     protected taskNameControl = new FormControl('', [noWhitespaceValidator]);
@@ -62,7 +66,7 @@ export class ToDoItemComponent {
 
         this.clickTimer = setTimeout(() => {
             if (this.isSingleClickAllowed) {
-                this.itemSelect.emit(this.data().id);
+                this.itemClicked.emit(this.data().id);
             }
         }, 200);
     }
@@ -92,5 +96,9 @@ export class ToDoItemComponent {
 
     protected onCancelChanges(): void {
         this.isEdit.set(false);
+    }
+
+    protected onCheckboxChanged() {
+        this.itemCheckboxChanged.emit(this.data().id);
     }
 }

@@ -1,0 +1,20 @@
+.app-to-do-create-item__form {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    --mat-form-field-container-height: 56px;
+
+    .app-to-do-create-item__fields {
+        flex: 1 1 auto;
+    }
+
+    .app-button_add {
+        height: var(--mat-form-field-container-height);
+    }
+}
+
+.app-to-do-create-item__fields {
+    display: flex;
+    flex-direction: column;
+}
