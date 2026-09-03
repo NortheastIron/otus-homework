@@ -80,7 +80,7 @@ export class ToDoPageComponent implements OnInit {
                     text: `Tasks loading error`,
                     type: TYPES_TOAST.ERROR,
                 });
-            }
+            },
         });
 
         this.toastService.show({

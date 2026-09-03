@@ -1,0 +1,1 @@
+export { baseInterceptor } from './base.interceptor';
