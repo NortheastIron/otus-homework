@@ -5,12 +5,16 @@ import { ToDoPageComponent } from '@features';
 export const routes: Routes = [
     {
         path: '',
-        component: ToDoPageComponent,
-        title: 'ToDoApp',
+        redirectTo: '/tasks',
         pathMatch: 'full',
     },
     {
+        path: 'tasks',
+        component: ToDoPageComponent,
+        title: 'ToDoApp',
+    },
+    {
         path: '**',
-        redirectTo: '',
+        redirectTo: '/tasks',
     },
 ];
