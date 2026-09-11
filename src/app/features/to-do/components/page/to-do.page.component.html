@@ -22,7 +22,7 @@
                     @for (item of filteredTasks(); track item.id) {
                         <li>
                             <app-to-do-item [data]="item"
-                                            [isView]="viewItemId() === item.id"
+                                            [isView]="isViewTask(item.id)()" 
                                             [isSelect]="selectedIds().has(item.id)"
                                             (itemClicked)="onHandlerItemClicked($event)"
                                             (itemCheckboxChanged)="onHandlerItemCheckboxChanged($event)"
@@ -66,15 +66,6 @@
         <app-to-do-create-item (createItemSubmit)="onHandlerCreateItemSubmit($event)"></app-to-do-create-item>
     </section>
 
-    @if (viewItemId()) {
-        <section class="app-to-do-details">
-            <div class="app-to-do-details__header">
-                <h2 class="app-to-do-details__title">{{this.viewItem()?.text}}</h2>
-                <button app-icon-button-class="CANCEL" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
-            </div>
-            
-            <div class="app-to-do-details__description">{{this.viewItem()?.description}}</div>
-        </section>
-    }
+    <router-outlet></router-outlet>
 
 </article>

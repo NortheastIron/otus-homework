@@ -31,6 +31,10 @@ export class ToDoService {
         );
     }
 
+    public get(id: string): Task | null {
+        return this._tasks().find(task => task.id === id) || null;
+    }
+
     public addTask(task: Omit<Task, 'id' | 'status'>): Observable<Task> {
         return this.http.post<Task>(this.apiUrl, {
             text: task.text.trim(),

@@ -1,0 +1,17 @@
+<section class="app-to-do-details">
+    <div class="app-to-do-details__header">
+        <h2 class="app-to-do-details__title">{{
+            isLoading() ? '' : task()?.text || '---'
+        }}</h2>
+        <button app-icon-button-class="CANCEL" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
+    </div>
+
+    @if (isLoading()) {
+        <app-loading-indicator></app-loading-indicator>
+    } @else {
+        <div class="app-to-do-details__status">
+            {{ task()?.status ? taskStatuses[task()!.status] : '---' }}
+        </div>
+        <div class="app-to-do-details__description">{{task()?.description || '---'}}</div>
+    }
+</section>

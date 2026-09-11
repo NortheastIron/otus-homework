@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { ToDoPageComponent } from '@features';
+import { ToDoDetailsComponent, ToDoPageComponent } from '@features';
 
 export const routes: Routes = [
     {
@@ -12,6 +12,12 @@ export const routes: Routes = [
         path: 'tasks',
         component: ToDoPageComponent,
         title: 'ToDoApp',
+        children: [
+            {
+                path: ':id',
+                component: ToDoDetailsComponent,
+            },
+        ],
     },
     {
         path: '**',
