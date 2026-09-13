@@ -1,0 +1,18 @@
+<section class="app-to-do-details">
+    <div class="app-to-do-details__header">
+        <h2 class="app-to-do-details__title">Task details</h2>
+        <button app-icon-button-class="CANCEL" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
+    </div>
+
+    <div class="app-to-do-details__content">
+        @if (isLoading()) {
+            <app-loading-indicator></app-loading-indicator>
+        } @else if (task(); as taskData) {
+            <app-to-do-details-view [data]="taskData"></app-to-do-details-view>
+        } @else {
+            <p class="app-to-do-details__error">Что-то пошло не так!</p>
+        }
+    </div>
+
+
+</section>

@@ -1,0 +1,29 @@
+.app-to-do-details-view {
+    width: 400px;
+    height: 200px;
+    position: relative;
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+
+    &__title {
+        line-height: 32px;
+        min-height: 32px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-weight: 600;
+    }
+
+    &__status {
+        font-style: italic;
+        color: #878787;
+    }
+
+    &__description {
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+        margin-right: -16px;
+        word-break: break-all;
+    }
+}

@@ -58,38 +58,3 @@
         }
     }
 }
-
-.app-to-do-details {
-    width: 400px;
-    height: 200px;
-    padding: 20px;
-    display: flex;
-    flex-flow: column;
-    gap: 20px;
-    box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
-
-    &__header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-
-        .app-icon-button {
-            flex-shrink: 0;
-        }
-    }
-
-    &__title {
-        line-height: 32px;
-        min-height: 32px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-
-    &__description {
-        overflow-y: auto;
-        scrollbar-gutter: stable;
-        margin-right: -16px;
-    }
-}

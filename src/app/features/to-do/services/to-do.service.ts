@@ -3,7 +3,7 @@ import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Task, TaskStatus } from '@features/to-do/types';
 import { TASK_STATUS } from '@features/to-do/constants';
 import { HttpClient } from '@angular/common/http';
-import { catchError, finalize, first, from, map, mergeMap, Observable, of, tap, toArray } from 'rxjs';
+import { catchError, finalize, from, map, mergeMap, Observable, of, tap, toArray } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -11,7 +11,7 @@ import { catchError, finalize, first, from, map, mergeMap, Observable, of, tap, 
 export class ToDoService {
     private http: HttpClient = inject(HttpClient);
 
-    private apiUrl = '/api/tasks';
+    private apiUrl = '/tasks';
     private _tasks: WritableSignal<Task[]> = signal([]);
     private _isLoadingTasks: WritableSignal<boolean> = signal(false);
 
@@ -23,13 +23,16 @@ export class ToDoService {
 
         return this.http.get<Task[]>(this.apiUrl).pipe(
             tap({
-                next: (tasks) => this._tasks.set(tasks)
+                next: (tasks) => this._tasks.set(tasks),
             }),
-            first(),
             finalize(() => {
                 this._isLoadingTasks.set(false);
             }),
         );
+    }
+
+    public getTaskById(id: string): Task | null {
+        return this._tasks().find(task => task.id === id) || null;
     }
 
     public addTask(task: Omit<Task, 'id' | 'status'>): Observable<Task> {
@@ -46,7 +49,6 @@ export class ToDoService {
                     ]);
                 },
             }),
-            first(),
         );
     }
 
@@ -55,7 +57,6 @@ export class ToDoService {
             tap({
                 next: () => this._tasks.update(items => items.filter(item => item.id !== id)),
             }),
-            first(),
         );
     }
 
@@ -64,7 +65,6 @@ export class ToDoService {
             tap({
                 next: () => this._tasks.update(items => items.map(item => item.id === task.id ? { ...task } : item)),
             }),
-            first(),
         );
     }
 

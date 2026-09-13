@@ -1,16 +1,26 @@
 import { Routes } from '@angular/router';
 
-import { ToDoPageComponent } from '@features';
+import { ToDoDetailsComponent, ToDoPageComponent } from '@features';
 
 export const routes: Routes = [
     {
         path: '',
-        component: ToDoPageComponent,
-        title: 'ToDoApp',
+        redirectTo: '/tasks',
         pathMatch: 'full',
     },
     {
+        path: 'tasks',
+        component: ToDoPageComponent,
+        title: 'ToDoApp',
+        children: [
+            {
+                path: ':id',
+                component: ToDoDetailsComponent,
+            },
+        ],
+    },
+    {
         path: '**',
-        redirectTo: '',
+        redirectTo: '/tasks',
     },
 ];

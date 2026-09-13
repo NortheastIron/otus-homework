@@ -1,0 +1,29 @@
+.app-to-do-details {
+    min-width: 440px;
+    min-height: 282px;
+    position: relative;
+    padding: 20px;
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+
+    &__header {
+        height: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+
+        .app-icon-button {
+            flex-shrink: 0;
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: center;
+        align-items: center;
+    }
+}

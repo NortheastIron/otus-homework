@@ -1,11 +1,25 @@
-import { Component, computed, DestroyRef, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import { 
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    OnDestroy,
+    OnInit,
+    OutputRefSubscription,
+    Signal,
+    signal,
+    WritableSignal,
+} from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+
+import { filter, finalize, map } from 'rxjs';
 
 import {
     ButtonComponent,
-    IconButtonComponent,
     LoadingIndicatorComponent,
 } from '@shared';
 
@@ -15,10 +29,11 @@ import { TooltipDirective } from '@common/tooltip';
 import { ToDoItemComponent } from '@features/to-do/components/item';
 import { Task, TaskStatus } from '@features/to-do/types';
 import { ToDoService } from '@features/to-do/services';
-import { TASK_STATUS } from '@features/to-do/constants';
+import { REG_URL_TASKID, TASK_STATUS, TASKS_PAGE_URL } from '@features/to-do/constants';
 import { ToDoCreateItemComponent } from '@features/to-do/components/create-item';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { ToDoDetailsComponent } from '@features/to-do/components/details';
+
+type possibleRouteComponents = ToDoDetailsComponent;
 
 @Component({
     selector: 'app-to-do-page',
@@ -29,17 +44,21 @@ import { finalize } from 'rxjs';
         ToDoItemComponent,
         ButtonComponent,
         TooltipDirective,
-        IconButtonComponent,
         LoadingIndicatorComponent,
         ToDoCreateItemComponent,
+        RouterOutlet,
     ],
     templateUrl: './to-do.page.component.html',
     styleUrl: './to-do.page.component.scss',
 })
-export class ToDoPageComponent implements OnInit {
+export class ToDoPageComponent implements OnInit, OnDestroy {
     private toastService = inject(ToastService);
     private toDoService = inject(ToDoService);
     private destroyRef = inject(DestroyRef);
+    private router = inject(Router);
+    private route = inject(ActivatedRoute);
+        
+    private viewIdRexExp = new RegExp(REG_URL_TASKID);
     
     protected filteredTasks = computed(() => {
         const tasks = this.tasks();
@@ -51,8 +70,6 @@ export class ToDoPageComponent implements OnInit {
     protected isLocalLoading: WritableSignal<boolean> = signal(false);
     protected isLoading: Signal<boolean> = computed(() => this.isLoadingTasks() || this.isLocalLoading());
     protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.filteredTasks().length);
-    protected viewItemId: WritableSignal<string | null> = signal(null); 
-    protected viewItem: Signal<Task | null> = computed(() => this.filteredTasks().find(item => item.id === this.viewItemId()) || null);
     protected selectedIds: WritableSignal<Set<string>> = signal(new Set([]));
     protected selectedCount = computed(() => this.selectedIds().size);
     protected selectedStatus: WritableSignal<TaskStatus | null> = signal(null);
@@ -62,10 +79,14 @@ export class ToDoPageComponent implements OnInit {
         {value: TASK_STATUS.COMPLETED, viewValue: 'Completed'},
     ];
     protected errorMessage: WritableSignal<string> = signal('');
-
+    protected viewTaskId = toSignal(this.router.events.pipe(
+        filter(ev => ev instanceof NavigationEnd),
+        map(ev => this.viewIdRexExp.exec(ev.urlAfterRedirects)?.[1]),
+    ), { initialValue: this.viewIdRexExp.exec(this.router.url)?.[1]});
     protected TASK_STATUS = TASK_STATUS;
 
     private tasks = this.toDoService.tasks;
+    private toDoDetailsCloseSub: OutputRefSubscription | null = null;
 
     ngOnInit(): void {
         this.toDoService.loadTasks().pipe(
@@ -80,13 +101,17 @@ export class ToDoPageComponent implements OnInit {
                     text: `Tasks loading error`,
                     type: TYPES_TOAST.ERROR,
                 });
-            }
+            },
         });
 
         this.toastService.show({
             text: 'ToDo page WELCOME',
             type: TYPES_TOAST.INFO,
         });
+    }
+
+    ngOnDestroy() {
+        this.toDoDetailsCloseSub?.unsubscribe();
     }
 
     protected onHandlerItemDelete(id: string): void {
@@ -99,8 +124,8 @@ export class ToDoPageComponent implements OnInit {
             }),
         ).subscribe({
             next: (deletedTask) => {
-                if (this.viewItemId() === id) {
-                    this.viewItemId.set(null);
+                if (this.viewTaskId() === id) {
+                    this.goToTasks();
                 }
 
                 if (this.selectedIds().has(id)) {
@@ -124,7 +149,7 @@ export class ToDoPageComponent implements OnInit {
     }
     
     protected onHandlerItemClicked(id: string): void {
-        this.viewItemId.set(id);
+        this.router.navigate([id], { relativeTo: this.route });
     }
 
     protected onHandlerItemCheckboxChanged(id: string): void {
@@ -159,10 +184,6 @@ export class ToDoPageComponent implements OnInit {
                 });
             },
         });
-    }
-
-    protected onCloseDetails() {
-        this.viewItemId.set(null);
     }
 
     protected onHandlerItemSaveEdit(task: Task) {
@@ -225,8 +246,14 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onSelectionStatusChange() {
-        if (this.viewItemId() && this.viewItem() === null) {
-            this.viewItemId.set(null);
+        const viewItemId = this.viewTaskId();
+
+        if (viewItemId) {
+            const viewTask = this.filteredTasks().find(item => item.id === viewItemId);
+
+            if (!viewTask) {
+                this.goToTasks();
+            }
         }
 
         const selected = this.selectedIds();
@@ -248,6 +275,23 @@ export class ToDoPageComponent implements OnInit {
                     this.deleteIdsFromSelectedIds(extraIds);
                 }
             }
+        }
+    }
+
+    protected onActivateRouterComponent(component: possibleRouteComponents) {
+        this.toDoDetailsCloseSub?.unsubscribe();
+
+        if (component instanceof ToDoDetailsComponent) {
+            this.toDoDetailsCloseSub = (component as ToDoDetailsComponent).detailsClose.subscribe(() => {
+                this.goToTasks();
+            });
+        }
+    }
+
+    protected onDeactivateRouterComponent(component: possibleRouteComponents) {
+        if (component instanceof ToDoDetailsComponent) {
+            this.toDoDetailsCloseSub?.unsubscribe();
+            this.toDoDetailsCloseSub = null;
         }
     }
 
@@ -275,5 +319,9 @@ export class ToDoPageComponent implements OnInit {
 
             return nSet;
         });
+    }
+
+    private goToTasks() {
+        this.router.navigate([TASKS_PAGE_URL]);
     }
 }
