@@ -1,0 +1,9 @@
+<section class="app-to-do-details-view">
+    <div class="app-to-do-details-view__title">{{
+        data().text || '---'
+    }}</div>
+    <div class="app-to-do-details-view__status">
+        {{ data().status ? taskStatuses[data().status] : '---' }}
+    </div>
+    <div class="app-to-do-details-view__description">{{data().description || '---'}}</div>
+</section>

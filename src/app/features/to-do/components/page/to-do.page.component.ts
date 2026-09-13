@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, ComponentRef, computed, DestroyRef, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -20,6 +20,9 @@ import { Task, TaskStatus } from '@features/to-do/types';
 import { ToDoService } from '@features/to-do/services';
 import { REG_URL_TASKID, TASK_STATUS, TASKS_PAGE_URL } from '@features/to-do/constants';
 import { ToDoCreateItemComponent } from '@features/to-do/components/create-item';
+import { ToDoDetailsComponent } from '@features/to-do/components/details';
+
+type possibleRouteComponents = ToDoDetailsComponent;
 
 @Component({
     selector: 'app-to-do-page',
@@ -227,7 +230,7 @@ export class ToDoPageComponent implements OnInit {
     }
 
     protected onSelectionStatusChange() {
-        const viewItemId = this.viewTaskId()
+        const viewItemId = this.viewTaskId();
 
         if (viewItemId) {
             const viewTask = this.filteredTasks().find(item => item.id === viewItemId);
@@ -264,6 +267,15 @@ export class ToDoPageComponent implements OnInit {
             paths: 'exact',
             queryParams: 'ignored',
         });
+    }
+
+    protected onActivateRouterComponent(componentRef: ComponentRef<possibleRouteComponents>) {
+
+        if (componentRef instanceof ToDoDetailsComponent) {
+            (componentRef as ToDoDetailsComponent).detailsClose.subscribe(() => {
+                this.goToTasks();
+            });
+        }
     }
 
     private updateSelectedIds(id: string): void {

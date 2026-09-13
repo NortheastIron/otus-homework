@@ -1,6 +1,6 @@
 .app-to-do-details {
-    width: 400px;
-    height: 200px;
+    min-width: 440px;
+    min-height: 282px;
     position: relative;
     padding: 20px;
     display: flex;
@@ -9,6 +9,7 @@
     box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
 
     &__header {
+        height: 32px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -19,23 +20,10 @@
         }
     }
 
-    &__title {
-        line-height: 32px;
-        min-height: 32px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-
-    &__status {
-        font-style: italic;
-        color: #878787;
-    }
-
-    &__description {
-        overflow-y: auto;
-        scrollbar-gutter: stable;
-        margin-right: -16px;
-        word-break: break-all;
+    &__content {
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: center;
+        align-items: center;
     }
 }

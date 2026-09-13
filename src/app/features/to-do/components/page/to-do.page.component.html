@@ -66,6 +66,6 @@
         <app-to-do-create-item (createItemSubmit)="onHandlerCreateItemSubmit($event)"></app-to-do-create-item>
     </section>
 
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="onActivateRouterComponent($event)"></router-outlet>
 
 </article>

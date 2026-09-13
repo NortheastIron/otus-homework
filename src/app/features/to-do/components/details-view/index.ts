@@ -1,0 +1,1 @@
+export { ToDoDetailsViewComponent } from './to-do.details-view.component';

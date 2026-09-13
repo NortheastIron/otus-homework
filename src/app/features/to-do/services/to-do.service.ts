@@ -31,7 +31,7 @@ export class ToDoService {
         );
     }
 
-    public get(id: string): Task | null {
+    public getTaskById(id: string): Task | null {
         return this._tasks().find(task => task.id === id) || null;
     }
 
