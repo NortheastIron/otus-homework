@@ -12,7 +12,7 @@ export class ToDoDetailsViewComponent {
 
     public data = input.required<Task>();
 
-    protected taskStatuses = {
+    protected readonly taskStatuses = {
         [TASK_STATUS.NEW]: 'New',
         [TASK_STATUS.INPROGRESS]: 'In progress',
         [TASK_STATUS.COMPLETED]: 'Completed',

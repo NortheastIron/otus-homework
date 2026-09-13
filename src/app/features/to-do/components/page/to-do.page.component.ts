@@ -1,9 +1,20 @@
-import { Component, ComponentRef, computed, DestroyRef, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import { 
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    OnDestroy,
+    OnInit,
+    OutputRefSubscription,
+    Signal,
+    signal,
+    WritableSignal,
+} from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, isActive, NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 
 import { filter, finalize, map } from 'rxjs';
 
@@ -40,12 +51,14 @@ type possibleRouteComponents = ToDoDetailsComponent;
     templateUrl: './to-do.page.component.html',
     styleUrl: './to-do.page.component.scss',
 })
-export class ToDoPageComponent implements OnInit {
+export class ToDoPageComponent implements OnInit, OnDestroy {
     private toastService = inject(ToastService);
     private toDoService = inject(ToDoService);
     private destroyRef = inject(DestroyRef);
     private router = inject(Router);
     private route = inject(ActivatedRoute);
+        
+    private viewIdRexExp = new RegExp(REG_URL_TASKID);
     
     protected filteredTasks = computed(() => {
         const tasks = this.tasks();
@@ -66,15 +79,14 @@ export class ToDoPageComponent implements OnInit {
         {value: TASK_STATUS.COMPLETED, viewValue: 'Completed'},
     ];
     protected errorMessage: WritableSignal<string> = signal('');
-
-    protected TASK_STATUS = TASK_STATUS;
-
-    private tasks = this.toDoService.tasks;
-    private viewIdRexExp = new RegExp(REG_URL_TASKID);
-    private viewTaskId = toSignal(this.router.events.pipe(
+    protected viewTaskId = toSignal(this.router.events.pipe(
         filter(ev => ev instanceof NavigationEnd),
         map(ev => this.viewIdRexExp.exec(ev.urlAfterRedirects)?.[1]),
     ), { initialValue: this.viewIdRexExp.exec(this.router.url)?.[1]});
+    protected TASK_STATUS = TASK_STATUS;
+
+    private tasks = this.toDoService.tasks;
+    private toDoDetailsCloseSub: OutputRefSubscription | null = null;
 
     ngOnInit(): void {
         this.toDoService.loadTasks().pipe(
@@ -96,6 +108,10 @@ export class ToDoPageComponent implements OnInit {
             text: 'ToDo page WELCOME',
             type: TYPES_TOAST.INFO,
         });
+    }
+
+    ngOnDestroy() {
+        this.toDoDetailsCloseSub?.unsubscribe();
     }
 
     protected onHandlerItemDelete(id: string): void {
@@ -262,19 +278,20 @@ export class ToDoPageComponent implements OnInit {
         }
     }
 
-    protected isViewTask(id: string): Signal<boolean> {
-        return isActive(`${TASKS_PAGE_URL}/${id}`, this.router, {
-            paths: 'exact',
-            queryParams: 'ignored',
-        });
-    }
+    protected onActivateRouterComponent(component: possibleRouteComponents) {
+        this.toDoDetailsCloseSub?.unsubscribe();
 
-    protected onActivateRouterComponent(componentRef: ComponentRef<possibleRouteComponents>) {
-
-        if (componentRef instanceof ToDoDetailsComponent) {
-            (componentRef as ToDoDetailsComponent).detailsClose.subscribe(() => {
+        if (component instanceof ToDoDetailsComponent) {
+            this.toDoDetailsCloseSub = (component as ToDoDetailsComponent).detailsClose.subscribe(() => {
                 this.goToTasks();
             });
+        }
+    }
+
+    protected onDeactivateRouterComponent(component: possibleRouteComponents) {
+        if (component instanceof ToDoDetailsComponent) {
+            this.toDoDetailsCloseSub?.unsubscribe();
+            this.toDoDetailsCloseSub = null;
         }
     }
 

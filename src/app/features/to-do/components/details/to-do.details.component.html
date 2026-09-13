@@ -7,8 +7,8 @@
     <div class="app-to-do-details__content">
         @if (isLoading()) {
             <app-loading-indicator></app-loading-indicator>
-        } @else if (task()) {
-            <app-to-do-details-view [data]="task()!"></app-to-do-details-view>
+        } @else if (task(); as taskData) {
+            <app-to-do-details-view [data]="taskData"></app-to-do-details-view>
         } @else {
             <p class="app-to-do-details__error">Что-то пошло не так!</p>
         }

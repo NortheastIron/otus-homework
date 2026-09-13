@@ -1,8 +1,12 @@
+@let taskData = data();
+@let isViewItem = isView();
+@let isEditItem = isEdit();
+
 <div class="app-to-do-item"
-     [class.app-to-do-item_view]="isView()"
-     [class.app-to-do-item_edited]="isEdit()"
+     [class.app-to-do-item_view]="isViewItem"
+     [class.app-to-do-item_edited]="isEditItem"
      appTooltip="Кликните для подробностей"
-     [appTooltipIsDisabled]="isEdit() || isView()">
+     [appTooltipIsDisabled]="isEditItem || isViewItem">
     <input class="app-to-do-item__checkbox"
            type="checkbox"
            [checked]="isSelect()"
@@ -10,12 +14,12 @@
            appTooltip="Кликните для изменения">
     <div class="app-to-do-item__status"
          [class]="{
-            'app-to-do-item__status_new' : data().status === taskStatus.NEW,
-            'app-to-do-item__status_inprogress' : data().status === taskStatus.INPROGRESS,
-            'app-to-do-item__status_completed' : data().status === taskStatus.COMPLETED,
+            'app-to-do-item__status_new' : taskData.status === taskStatus.NEW,
+            'app-to-do-item__status_inprogress' : taskData.status === taskStatus.INPROGRESS,
+            'app-to-do-item__status_completed' : taskData.status === taskStatus.COMPLETED,
          }">
     </div>
-    @if (isEdit()) {
+    @if (isEditItem) {
         <mat-form-field class="app-to-do-item__field">
             <mat-label>Todo name</mat-label>
             <input name="taskName"
@@ -41,7 +45,7 @@
         </div>
         
     } @else {
-        <span class="app-to-do-item__text">{{data().text}}</span>
+        <span class="app-to-do-item__text">{{taskData.text}}</span>
     }
     <button app-button [appButtonType]="typesButton.DELETE" (click)="onRemove()" appTooltip="Удалить задачу">Delete</button>
 </div>

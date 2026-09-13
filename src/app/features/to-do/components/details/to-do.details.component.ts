@@ -17,7 +17,7 @@ import { ToDoDetailsViewComponent } from '@features/to-do/components/details-vie
     styleUrl: './to-do.details.component.scss',
 })
 export class ToDoDetailsComponent {
-    private toDoService = inject(ToDoService);
+    private readonly toDoService = inject(ToDoService);
 
     public id = input.required<string>();
 
@@ -25,7 +25,6 @@ export class ToDoDetailsComponent {
 
     protected task: WritableSignal<Task | null> = signal(null);
     protected isLoading = signal(false);
-
 
     constructor() {
         effect(() => {
