@@ -1,12 +1,12 @@
 .app-to-do-details {
-    min-width: 440px;
-    min-height: 282px;
+    height: 100%;
+    width: 100%;
+    background: var(--mat-sys-surface);
     position: relative;
     padding: 20px;
     display: flex;
     flex-flow: column;
     gap: 10px;
-    box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
 
     &__header {
         height: 32px;

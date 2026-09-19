@@ -1,79 +1,24 @@
 <article class="app-to-do-page">
-    <section class="app-to-do-list">
-        <h1>Todo List</h1>
+    @let tAtciveTab = activeTab();
 
-        <div class="app-to-do-list__filters">
-            <mat-form-field>
-                <mat-label>Task status</mat-label>
-                <mat-select [(value)]="selectedStatus" (selectionChange)="onSelectionStatusChange()">
-                    <mat-option [value]="null">All tasks</mat-option>
-                    @for (status of taskStatuses; track $index) {
-                    <mat-option [value]="status.value">{{ status.viewValue }}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-        </div>
-
-        <div class="app-to-do-list__cont" [class.app-to-do-list__cont_empty-loader]="isEmptyOrLoading()">
-            @let tasks = filteredTasks();
-            @let viewId = viewTaskId();
-            @let tSelectedIds = selectedIds();
-
-            @if (isLoading()) {
-                <app-loading-indicator></app-loading-indicator>
-            } @else if (tasks.length) {
-                <ul class="app-to-do-list__items">
-                    @for (item of tasks; track item.id) {
-                        <li>
-                            <app-to-do-item [data]="item"
-                                            [isView]="viewId === item.id" 
-                                            [isSelect]="tSelectedIds.has(item.id)"
-                                            (itemClicked)="onHandlerItemClicked($event)"
-                                            (itemCheckboxChanged)="onHandlerItemCheckboxChanged($event)"
-                                            (itemDelete)="onHandlerItemDelete($event)"
-                                            (itemSaveEdit)="onHandlerItemSaveEdit($event)">
-                            </app-to-do-item>
-                        </li>
-                    }
-                </ul>
-            } @else {
-                <p class="app-to-do-list__empty-message">
-                    {{ errorMessage() || 'Список пуст. Добавьте задачу или измените статус существующих' }}
-                </p>
+    <div class="app-to-do-page__sidebar">
+        <h1 class="app-to-do-name">TaskBoard</h1>
+        <div class="app-to-do-page__nav">
+            @for (tab of tabs; track tab.key) {
+                <a class="app-to-do-page__tab" [class.app-to-do-page__tab_active]="tAtciveTab?.key === tab.key" [routerLink]="tab.url" >
+                    <span class="app-to-do-page__tab-name">{{tab.name}}</span>
+                </a>
             }
         </div>
-
-        <div class="app-to-do-list__status-management">
-            @let tSelectedCount = selectedCount();
-
-            <button app-button
-                    class="app-button_new"
-                    [disabled]="tSelectedCount < 1"
-                    (click)="onStatusChange(TASK_STATUS.NEW)"
-                    appTooltip="Установить статус NEW"
-                    [appTooltipIsDisabled]="tSelectedCount < 1">NEW
-            </button>
-            <button app-button
-                    class="app-button_inprogress"
-                    [disabled]="tSelectedCount < 1"
-                    (click)="onStatusChange(TASK_STATUS.INPROGRESS)"
-                    appTooltip="Установить статус In progress"
-                    [appTooltipIsDisabled]="tSelectedCount < 1">In progress
-            </button>
-            <button app-button
-                    class="app-button_completed"
-                    [disabled]="tSelectedCount < 1"
-                    (click)="onStatusChange(TASK_STATUS.COMPLETED)"
-                    appTooltip="Установить статус Completed"
-                    [appTooltipIsDisabled]="tSelectedCount < 1">Completed
-            </button>
+    </div>
+    <div class="app-to-do-page__content">
+        <div class="app-to-do-page__header">
+            <h2>{{tAtciveTab?.name || '---'}}</h2>
         </div>
-
-        <app-to-do-create-item (createItemSubmit)="onHandlerCreateItemSubmit($event)"></app-to-do-create-item>
-    </section>
-
-    <router-outlet (activate)="onActivateRouterComponent($event)"
-                   (deactivate)="onDeactivateRouterComponent($event)">
-    </router-outlet>
-
+        <div class="app-to-do-page__router-container">
+            <router-outlet>
+            </router-outlet>
+        </div>
+    </div>
+    
 </article>
