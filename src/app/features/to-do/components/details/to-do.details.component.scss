@@ -6,6 +6,8 @@
     flex-flow: column;
     gap: 10px;
     padding: 20px 0;
+    background-color: var(--mat-sys-surface);
+    border-radius: 10px;
 
     &__header {
         padding: 0 20px;
