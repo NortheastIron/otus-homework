@@ -1,10 +1,11 @@
 .app-to-do-details-view {
-    width: 400px;
-    height: 200px;
+    height: 100%;
+    width: 100%;
     position: relative;
     display: flex;
     flex-flow: column;
     gap: 10px;
+    padding: 0 20px;
 
     &__title {
         line-height: 32px;

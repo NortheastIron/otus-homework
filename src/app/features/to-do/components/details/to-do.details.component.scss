@@ -1,16 +1,17 @@
 .app-to-do-details {
     height: 100%;
     width: 100%;
-    background: var(--mat-sys-surface);
     position: relative;
-    padding: 20px;
     display: flex;
     flex-flow: column;
     gap: 10px;
+    padding: 20px 0;
 
     &__header {
+        padding: 0 20px;
         height: 32px;
         display: flex;
+        flex-shrink: 0;
         justify-content: space-between;
         align-items: center;
         gap: 15px;
@@ -20,10 +21,22 @@
         }
     }
 
+    &__title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     &__content {
-        display: flex;
+        height: calc(100% - 32px);
         flex: 1 1 auto;
-        justify-content: center;
-        align-items: center;
+        overflow: hidden;
+
+        &_empty-loader {
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+        }
     }
 }

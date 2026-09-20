@@ -8,6 +8,7 @@
         flex: 1 1 auto;
         border-radius: 10px;
         overflow: hidden;
+        background: var(--mat-sys-surface);
     }
 }
 
@@ -23,6 +24,7 @@
     &__cont {
         flex: 1 1 auto;
         overflow-y: auto;
+        min-height: 100px;
         scrollbar-gutter: stable;
         margin-right: -16px;
         position: relative;

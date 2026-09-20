@@ -27,8 +27,26 @@
     {
       "text": "dsadad",
       "description": "dsadsa",
-      "status": "NEW",
+      "status": "INPROGRESS",
       "id": "TalzOZB5Lw8"
+    },
+    {
+      "text": "dsdas",
+      "description": "",
+      "status": "INPROGRESS",
+      "id": "3t-v_TaiKO0"
+    },
+    {
+      "text": "dsadsa",
+      "description": "",
+      "status": "NEW",
+      "id": "pIT-bTgRhzs"
+    },
+    {
+      "text": "dsds",
+      "description": "",
+      "status": "NEW",
+      "id": "IoxlzRSP4pk"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

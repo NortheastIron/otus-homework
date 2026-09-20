@@ -1,4 +1,15 @@
-import { Component, effect, inject, input, output, OutputEmitterRef, signal, WritableSignal } from '@angular/core';
+import {
+    Component,
+    computed,
+    effect,
+    inject,
+    input,
+    output,
+    OutputEmitterRef,
+    Signal,
+    signal,
+    WritableSignal
+} from '@angular/core';
 
 import { IconButtonComponent, LoadingIndicatorComponent } from '@shared';
 
@@ -25,6 +36,7 @@ export class ToDoDetailsComponent {
 
     protected task: WritableSignal<Task | null> = signal(null);
     protected isLoading = signal(false);
+    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.task());
 
     constructor() {
         effect(() => {
