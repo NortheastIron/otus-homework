@@ -22,13 +22,17 @@ export class ToDoBoardComponent {
     protected errorMessage = this.toDoService.errorMessage;
     protected tasksByStatus = computed(() => {
         const tasks = this.tasks();
-        
-        return {
-            [TASK_STATUS.NEW]: tasks.filter(task => task.status === TASK_STATUS.NEW),
-            [TASK_STATUS.INPROGRESS]: tasks.filter(task => task.status === TASK_STATUS.INPROGRESS),
-            [TASK_STATUS.COMPLETED]: tasks.filter(task => task.status === TASK_STATUS.COMPLETED),
-        };
+
+        return tasks.reduce((acc, task) => {
+            acc[task.status].push(task);
+            return acc;
+        }, {
+            [TASK_STATUS.NEW]: [] as typeof tasks,
+            [TASK_STATUS.INPROGRESS]: [] as typeof tasks,
+            [TASK_STATUS.COMPLETED]: [] as typeof tasks,
+        });
     });
+
     protected isLoadingTasks: Signal<boolean> = this.toDoService.isLoadingTasks;
     protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoadingTasks() || !!this.errorMessage());
 

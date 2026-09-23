@@ -6,7 +6,7 @@
         <app-loading-indicator></app-loading-indicator>
     } @else if (tErrorMessage) {
         <p class="app-to-do-board__error-message">
-            {{ tErrorMessage || 'Список пуст. Добавьте задачу или измените статус существующих' }}
+            {{ tErrorMessage }}
         </p>
     } @else {
         @for (status of taskStatuses; track $index) {

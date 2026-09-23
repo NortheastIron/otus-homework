@@ -11,6 +11,8 @@ import {
     WritableSignal,
 } from '@angular/core';
 
+import { TooltipDirective } from '@common';
+
 import { IconButtonComponent, LoadingIndicatorComponent } from '@shared';
 
 import { ToDoService } from '@features/to-do/services';
@@ -23,6 +25,7 @@ import { ToDoDetailsViewComponent } from '@features/to-do/components/details-vie
         IconButtonComponent,
         LoadingIndicatorComponent,
         ToDoDetailsViewComponent,
+        TooltipDirective,
     ],
     templateUrl: './to-do.details.component.html',
     styleUrl: './to-do.details.component.scss',
