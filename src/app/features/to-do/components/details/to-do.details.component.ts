@@ -8,7 +8,7 @@ import {
     OutputEmitterRef,
     Signal,
     signal,
-    WritableSignal
+    WritableSignal,
 } from '@angular/core';
 
 import { IconButtonComponent, LoadingIndicatorComponent } from '@shared';

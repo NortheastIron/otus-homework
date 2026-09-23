@@ -14,16 +14,19 @@ export class ToDoService {
     private apiUrl = '/tasks';
     private _tasks: WritableSignal<Task[]> = signal([]);
     private _isLoadingTasks: WritableSignal<boolean> = signal(false);
+    private _errorMessage: WritableSignal<string> = signal('');
 
     public readonly tasks = this._tasks.asReadonly();
     public readonly isLoadingTasks = this._isLoadingTasks.asReadonly();
+    public readonly errorMessage = this._errorMessage.asReadonly();
 
     public loadTasks(): Observable<Task[]> {
         this._isLoadingTasks.set(true);
 
         return this.http.get<Task[]>(this.apiUrl).pipe(
             tap({
-                next: (tasks) => this._tasks.set(tasks),
+                next: tasks => this._tasks.set(tasks),
+                error: err => this._errorMessage.set(err.message),
             }),
             finalize(() => {
                 this._isLoadingTasks.set(false);

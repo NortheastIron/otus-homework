@@ -1,0 +1,68 @@
+.app-to-do-board {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+
+    &_empty-loader {
+            display: flex;
+            flex-flow: column;
+            align-items: center;
+            justify-content: center;
+    }
+
+    &__empty-message {
+        text-align: center;
+    }
+}
+
+.app-to-do-status-block {
+    flex: 1 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-right: 25px;
+
+    &__title {
+        font-weight: 600;
+        white-space: nowrap;
+        display: flex;
+        gap: 5px;
+        padding-bottom: 15px;
+    }
+
+    &__name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__count {
+        flex-shrink: 0;
+    }
+
+    &__tasks {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+        margin-right: -15px;
+        padding-right: 10px;
+    }
+}
+
+.app-to-do-task-card {
+    height: 40px;
+    padding: 5px 15px;
+    line-height: 32px;
+    background-color: var(--mat-sys-surface);
+    border-radius: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &__text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

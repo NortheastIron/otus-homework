@@ -26,13 +26,13 @@ export const routes: Routes = [
                         path: ':id',
                         component: ToDoDetailsComponent,
                     },
-                ]
+                ],
             },
             {
                 path: 'board',
                 component: ToDoBoardComponent,
             },
-        ]
+        ],
     },
     {
         path: '**',

@@ -1,3 +1,31 @@
-<div class="app-to-do-board">
-    BOARD
+<div class="app-to-do-board" [class.app-to-do-board_empty-loader]="isEmptyOrLoading()">
+    @let tTasksByStatus = tasksByStatus();
+    @let tErrorMessage = errorMessage();
+    
+    @if (isLoadingTasks()) {
+        <app-loading-indicator></app-loading-indicator>
+    } @else if (tErrorMessage) {
+        <p class="app-to-do-board__error-message">
+            {{ tErrorMessage || 'Список пуст. Добавьте задачу или измените статус существующих' }}
+        </p>
+    } @else {
+        @for (status of taskStatuses; track $index) {
+            <div class="app-to-do-status-block">
+                <div class="app-to-do-status-block__title">
+                    <div class="app-to-do-status-block__name">{{status.viewValue}}</div>
+                    <div class="app-to-do-status-block__count">({{tTasksByStatus[status.value].length}})</div>
+                </div>
+                <div class="app-to-do-status-block__tasks">
+                    @for (task of tTasksByStatus[status.value]; track task.id) {
+                        <div class="app-to-do-task-card">
+                            <div class="app-to-do-task-card__text">
+                                {{task.text}}
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+    
 </div>

@@ -1,4 +1,14 @@
-import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, OutputRefSubscription, Signal, signal, WritableSignal } from '@angular/core';
+import {
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    OnDestroy,
+    OutputRefSubscription,
+    Signal,
+    signal,
+    WritableSignal,
+} from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -36,7 +46,7 @@ type possibleRouteComponents = ToDoDetailsComponent;
   templateUrl: './to-do.backlog.component.html',
   styleUrl: './to-do.backlog.component.scss',
 })
-export class ToDoBacklogComponent implements OnInit, OnDestroy {
+export class ToDoBacklogComponent implements OnDestroy {
 
     private toDoService = inject(ToDoService);
     private router = inject(Router);
@@ -61,34 +71,17 @@ export class ToDoBacklogComponent implements OnInit, OnDestroy {
     protected isLoadingTasks: Signal<boolean> = this.toDoService.isLoadingTasks;
     protected isLocalLoading: WritableSignal<boolean> = signal(false);
     protected isLoading: Signal<boolean> = computed(() => this.isLoadingTasks() || this.isLocalLoading());
-    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.filteredTasks().length);
+    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !!this.errorMessage() || !this.filteredTasks().length);
     protected viewTaskId = toSignal(this.router.events.pipe(
         filter(ev => ev instanceof NavigationEnd),
         map(ev => this.viewIdRexExp.exec(ev.urlAfterRedirects)?.[1]),
     ), { initialValue: this.viewIdRexExp.exec(this.router.url)?.[1]});
     protected selectedIds: WritableSignal<Set<string>> = signal(new Set([]));
     protected selectedCount = computed(() => this.selectedIds().size);
-    protected errorMessage: WritableSignal<string> = signal('');
+    protected errorMessage = this.toDoService.errorMessage;
 
     private tasks = this.toDoService.tasks;
     private toDoDetailsCloseSub: OutputRefSubscription | null = null;
-
-    ngOnInit(): void {
-        this.toDoService.loadTasks().pipe(
-            takeUntilDestroyed(this.destroyRef),
-        ).subscribe({
-            error: (err) => {
-                console.error(err);
-
-                this.errorMessage.set(err.message || 'Произошла ошибка в загрузке данных');
-
-                this.toastService.show({
-                    text: `Tasks loading error`,
-                    type: TYPES_TOAST.ERROR,
-                });
-            },
-        });
-    }
 
     ngOnDestroy() {
         this.toDoDetailsCloseSub?.unsubscribe();
