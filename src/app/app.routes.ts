@@ -1,26 +1,41 @@
 import { Routes } from '@angular/router';
 
-import { ToDoDetailsComponent, ToDoPageComponent } from '@features';
+import {
+    ToDoBacklogComponent,
+    ToDoBoardComponent,
+    ToDoDetailsComponent,
+    ToDoPageComponent,
+} from '@features';
 
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: '/tasks',
-        pathMatch: 'full',
-    },
-    {
-        path: 'tasks',
         component: ToDoPageComponent,
-        title: 'ToDoApp',
+        title: 'TasksBoard',
         children: [
             {
-                path: ':id',
-                component: ToDoDetailsComponent,
+                path: '',
+                redirectTo: 'backlog',
+                pathMatch: 'full',
+            },
+            {
+                path: 'backlog',
+                component: ToDoBacklogComponent,
+                children: [
+                    {
+                        path: ':id',
+                        component: ToDoDetailsComponent,
+                    },
+                ],
+            },
+            {
+                path: 'board',
+                component: ToDoBoardComponent,
             },
         ],
     },
     {
         path: '**',
-        redirectTo: '/tasks',
+        redirectTo: '',
     },
 ];

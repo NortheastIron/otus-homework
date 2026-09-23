@@ -7,5 +7,7 @@
     <div class="app-to-do-details-view__status">
         {{ taskData.status ? taskStatuses[taskData.status] : '---' }}
     </div>
-    <div class="app-to-do-details-view__description">{{taskData.description || '---'}}</div>
+    <div class="app-to-do-details-view__description">
+            {{taskData.description || '---'}}
+    </div>
 </section>

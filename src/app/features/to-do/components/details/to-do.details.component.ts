@@ -1,4 +1,17 @@
-import { Component, effect, inject, input, output, OutputEmitterRef, signal, WritableSignal } from '@angular/core';
+import {
+    Component,
+    computed,
+    effect,
+    inject,
+    input,
+    output,
+    OutputEmitterRef,
+    Signal,
+    signal,
+    WritableSignal,
+} from '@angular/core';
+
+import { TooltipDirective } from '@common';
 
 import { IconButtonComponent, LoadingIndicatorComponent } from '@shared';
 
@@ -12,6 +25,7 @@ import { ToDoDetailsViewComponent } from '@features/to-do/components/details-vie
         IconButtonComponent,
         LoadingIndicatorComponent,
         ToDoDetailsViewComponent,
+        TooltipDirective,
     ],
     templateUrl: './to-do.details.component.html',
     styleUrl: './to-do.details.component.scss',
@@ -25,6 +39,7 @@ export class ToDoDetailsComponent {
 
     protected task: WritableSignal<Task | null> = signal(null);
     protected isLoading = signal(false);
+    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !this.task());
 
     constructor() {
         effect(() => {

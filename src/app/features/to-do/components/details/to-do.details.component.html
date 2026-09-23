@@ -4,7 +4,7 @@
         <button app-icon-button-class="CANCEL" (click)="onCloseDetails()" appTooltip="Закрыть">X</button>
     </div>
 
-    <div class="app-to-do-details__content">
+    <div class="app-to-do-details__content" [class.app-to-do-details__content_empty-loader]="isEmptyOrLoading()">
         @if (isLoading()) {
             <app-loading-indicator></app-loading-indicator>
         } @else if (task(); as taskData) {
