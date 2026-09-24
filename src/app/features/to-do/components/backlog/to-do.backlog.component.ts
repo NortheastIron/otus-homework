@@ -124,7 +124,7 @@ export class ToDoBacklogComponent implements OnDestroy {
     protected onHandlerItemDelete(id: string): void {
         this.isLocalLoading.set(true);
 
-        this.toDoService.removeTask(id).pipe(
+        this.toDoService.remove(id).pipe(
             takeUntilDestroyed(this.destroyRef),
             finalize(() => {
                 this.isLocalLoading.set(false);
@@ -168,7 +168,7 @@ export class ToDoBacklogComponent implements OnDestroy {
 
         this.isLocalLoading.set(true);
 
-        this.toDoService.addTask({
+        this.toDoService.add({
             text, description,
         }).pipe(
             takeUntilDestroyed(this.destroyRef),
@@ -196,7 +196,7 @@ export class ToDoBacklogComponent implements OnDestroy {
     protected onHandlerItemSaveEdit(task: Task) {
         this.isLocalLoading.set(true);
 
-        this.toDoService.updateTask(task).pipe(
+        this.toDoService.update(task).pipe(
             takeUntilDestroyed(this.destroyRef),
             finalize(() => {
                 this.isLocalLoading.set(false);

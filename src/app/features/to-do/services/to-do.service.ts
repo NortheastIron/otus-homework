@@ -1,17 +1,15 @@
-import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
+import { catchError, finalize, from, map, mergeMap, Observable, of, tap, toArray } from 'rxjs';
+
+import { AbstractHttpService } from '@core';
 
 import { Task, TaskStatus } from '@features/to-do/types';
 import { TASK_STATUS } from '@features/to-do/constants';
-import { HttpClient } from '@angular/common/http';
-import { catchError, finalize, from, map, mergeMap, Observable, of, tap, toArray } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
-export class ToDoService {
-    private http: HttpClient = inject(HttpClient);
-
-    private apiUrl = '/tasks';
+export class ToDoService extends AbstractHttpService<Task, Omit<Task, 'id'>> {
     private _tasks: WritableSignal<Task[]> = signal([]);
     private _isLoadingTasks: WritableSignal<boolean> = signal(false);
     private _errorMessage: WritableSignal<string> = signal('');
@@ -20,10 +18,15 @@ export class ToDoService {
     public readonly isLoadingTasks = this._isLoadingTasks.asReadonly();
     public readonly errorMessage = this._errorMessage.asReadonly();
 
+    constructor() {
+        super();
+        this.setApiUrl('/tasks');
+    }
+
     public loadTasks(): Observable<Task[]> {
         this._isLoadingTasks.set(true);
 
-        return this.http.get<Task[]>(this.apiUrl).pipe(
+        return this.all().pipe(
             tap({
                 next: tasks => this._tasks.set(tasks),
                 error: err => this._errorMessage.set(err.message),
@@ -38,8 +41,8 @@ export class ToDoService {
         return this._tasks().find(task => task.id === id) || null;
     }
 
-    public addTask(task: Omit<Task, 'id' | 'status'>): Observable<Task> {
-        return this.http.post<Task>(this.apiUrl, {
+    public override add(task: Omit<Task, 'id' | 'status'>): Observable<Task> {
+        return super.add({
             text: task.text.trim(),
             description: task.description.trim(),
             status: TASK_STATUS.NEW,
@@ -55,16 +58,16 @@ export class ToDoService {
         );
     }
 
-    public removeTask(id: string): Observable<Task> {
-        return this.http.delete<Task>(`${this.apiUrl}/${id}`).pipe(
+    public override remove(id: string) {
+        return super.remove(id).pipe(
             tap({
                 next: () => this._tasks.update(items => items.filter(item => item.id !== id)),
             }),
         );
     }
 
-    public updateTask(task: Task): Observable<Task> {
-        return this.http.put<Task>(`${this.apiUrl}/${task.id}`, task).pipe(
+    public override update(task: Task): Observable<Task> {
+        return super.update(task).pipe(
             tap({
                 next: () => this._tasks.update(items => items.map(item => item.id === task.id ? { ...task } : item)),
             }),
@@ -73,7 +76,7 @@ export class ToDoService {
 
     public updateStatus(status: TaskStatus, ids: string[]): Observable<{ success: boolean, id: string }[]> {
         return from(ids).pipe(
-            mergeMap(id => this.http.patch<Task>(`${this.apiUrl}/${id}`, { status }).pipe(
+            mergeMap(id => super.patch({ status }, id).pipe(
                 map(task => ({ success: true, id: task.id})),
                 catchError((err) => {
                     console.error(err);

@@ -17,7 +17,7 @@ describe('ToDoService', () => {
     });
 
     it('should add task', () => {
-        service.addTask({text: '2', description: '2'});
+        service.add({text: '2', description: '2'});
         expect(service.tasks().length).toBe(2);
         
         const newItem = service.tasks().find(item => item.id === '2');
@@ -25,12 +25,12 @@ describe('ToDoService', () => {
     });
 
     it('should remove and length 0', () => {
-        service.removeTask('1');
+        service.remove('1');
         expect(service.tasks().length).toBe(0);
     });
 
     it('should update task', () => {
-        service.updateTask({
+        service.update({
             id: '1',
             text: 'FirstNew',
             description: 'DescriptionNew',
