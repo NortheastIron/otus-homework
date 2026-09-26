@@ -1,14 +1,15 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { Toast } from '@common/toasts/types';
 import { TYPES_TOAST } from '@common/toasts/constants';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ToastService {
-    private _toasts: WritableSignal<Toast[]> = signal([]);
-    public readonly toasts = this._toasts.asReadonly();
+    private _toastSubject = new BehaviorSubject<Toast[]>([]);
+    public readonly toasts$ = this._toastSubject.asObservable();
 
     public show(toast: Omit<Toast, 'id'>, duration: number = 5000): void {
         if (!toast.text.trim()) {
@@ -16,8 +17,9 @@ export class ToastService {
         }
 
         const id = crypto.randomUUID();
-        this._toasts.update(items => [
-            ...items,
+
+        this._toastSubject.next([
+            ...this._toastSubject.value,
             {
                 id,
                 text: toast.text.trim(),
@@ -31,6 +33,8 @@ export class ToastService {
     }
 
     private remove(id: string): void {
-        this._toasts.update(items => items.filter(item => item.id !== id));
+        this._toastSubject.next([
+            ...this._toastSubject.value.filter((item) => item.id !== id),
+        ]);
     }
 }

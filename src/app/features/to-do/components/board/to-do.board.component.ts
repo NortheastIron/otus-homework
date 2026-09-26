@@ -4,6 +4,7 @@ import { LoadingIndicatorComponent } from '@shared';
 
 import { TASK_STATUS } from '@features/to-do/constants';
 import { ToDoService } from '@features/to-do/services';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-to-do-board',
@@ -36,5 +37,6 @@ export class ToDoBoardComponent {
     protected isLoadingTasks: Signal<boolean> = this.toDoService.isLoadingTasks;
     protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoadingTasks() || !!this.errorMessage());
 
-    private tasks = this.toDoService.tasks;
+    // private tasks = this.toDoService.$tasks;
+    private tasks = toSignal(this.toDoService.tasks$, { initialValue: [] });
 }
