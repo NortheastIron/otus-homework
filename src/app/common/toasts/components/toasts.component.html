@@ -1,5 +1,6 @@
 <section class="app-toasts">
-    @for (item of reversedToasts(); track item.id) {
+    @let toasts = toasts$ | async;
+    @for (item of toasts; track item.id) {
         <div class="app-toasts__toast"
              [class]="{
                 'app-toasts__toast_info': item.type === typesToast.INFO,

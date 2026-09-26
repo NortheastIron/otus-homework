@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 
 export abstract class AbstractHttpService<
     ItemObject extends { id: string } = { id: string },
-    AddItemObject = object,
-    PatchItemObject = object,
+    AddItemObject =  Omit<ItemObject, 'id'>,
+    PatchItemObject = Partial<ItemObject>,
 > {
     private http: HttpClient = inject(HttpClient);
     private apiUrl: string = '';

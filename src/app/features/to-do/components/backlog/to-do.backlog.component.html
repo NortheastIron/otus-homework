@@ -13,15 +13,15 @@
         </div>
 
         <div class="app-to-do-list__cont" [class.app-to-do-list__cont_empty-loader]="isEmptyOrLoading()">
-            @let tasks = filteredTasks();
+            @let tTasks = filteredTasks();
             @let viewId = viewTaskId();
             @let tSelectedIds = selectedIds();
 
             @if (isLoading()) {
                 <app-loading-indicator></app-loading-indicator>
-            } @else if (tasks.length) {
+            } @else if (tTasks.length) {
                 <ul class="app-to-do-list__items">
-                    @for (item of tasks; track item.id) {
+                    @for (item of tTasks; track item.id) {
                         <li>
                             <app-to-do-item [data]="item"
                                             [isView]="viewId === item.id" 

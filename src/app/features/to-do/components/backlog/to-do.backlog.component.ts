@@ -71,7 +71,7 @@ export class ToDoBacklogComponent implements OnDestroy {
     protected isLoadingTasks: Signal<boolean> = this.toDoService.isLoadingTasks;
     protected isLocalLoading: WritableSignal<boolean> = signal(false);
     protected isLoading: Signal<boolean> = computed(() => this.isLoadingTasks() || this.isLocalLoading());
-    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !!this.errorMessage() || !this.filteredTasks().length);
+    protected isEmptyOrLoading: Signal<boolean> = computed(() => this.isLoading() || !!this.errorMessage() || !this.tasks().length);
     protected viewTaskId = toSignal(this.router.events.pipe(
         filter(ev => ev instanceof NavigationEnd),
         map(ev => this.viewIdRexExp.exec(ev.urlAfterRedirects)?.[1]),
@@ -79,20 +79,21 @@ export class ToDoBacklogComponent implements OnDestroy {
     protected selectedIds: WritableSignal<Set<string>> = signal(new Set([]));
     protected selectedCount = computed(() => this.selectedIds().size);
     protected errorMessage = this.toDoService.errorMessage;
+    protected tasks = toSignal(this.toDoService.tasks$, { initialValue: [] });
 
-    private tasks = this.toDoService.tasks;
     private toDoDetailsCloseSub: OutputRefSubscription | null = null;
+
 
     ngOnDestroy() {
         this.toDoDetailsCloseSub?.unsubscribe();
     }
-
-
+    
     protected onSelectionStatusChange() {
         const viewItemId = this.viewTaskId();
+        const tasks = this.tasks();
 
         if (viewItemId) {
-            const viewTask = this.filteredTasks().find(item => item.id === viewItemId);
+            const viewTask = tasks.find(item => item.id === viewItemId);
 
             if (!viewTask) {
                 this.goToBacklog();
@@ -102,11 +103,12 @@ export class ToDoBacklogComponent implements OnDestroy {
         const selected = this.selectedIds();
 
         if (selected.size) {
-            const filteredTasksIdsSet = new Set(this.filteredTasks().map(task => task.id));
+
+            const tasksIdsSet = new Set(tasks.map(task => task.id));
             const extraIds: string[] = [];
 
             for (const id of selected) {
-                if (!filteredTasksIdsSet.has(id)) {
+                if (!tasksIdsSet.has(id)) {
                     extraIds.push(id);
                 }
             }

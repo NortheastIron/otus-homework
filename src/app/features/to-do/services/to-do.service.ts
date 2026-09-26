@@ -1,5 +1,5 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
-import { catchError, finalize, from, map, mergeMap, Observable, of, tap, toArray } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, from, map, mergeMap, Observable, of, tap, toArray } from 'rxjs';
 
 import { AbstractHttpService } from '@core';
 
@@ -9,12 +9,13 @@ import { TASK_STATUS } from '@features/to-do/constants';
 @Injectable({
     providedIn: 'root',
 })
-export class ToDoService extends AbstractHttpService<Task, Omit<Task, 'id'>> {
-    private _tasks: WritableSignal<Task[]> = signal([]);
+export class ToDoService extends AbstractHttpService<Task> {
+    private _tasksSubject = new BehaviorSubject<Task[]>([]);
+
     private _isLoadingTasks: WritableSignal<boolean> = signal(false);
     private _errorMessage: WritableSignal<string> = signal('');
 
-    public readonly tasks = this._tasks.asReadonly();
+    public readonly tasks$ = this._tasksSubject.asObservable();
     public readonly isLoadingTasks = this._isLoadingTasks.asReadonly();
     public readonly errorMessage = this._errorMessage.asReadonly();
 
@@ -28,7 +29,7 @@ export class ToDoService extends AbstractHttpService<Task, Omit<Task, 'id'>> {
 
         return this.all().pipe(
             tap({
-                next: tasks => this._tasks.set(tasks),
+                next: tasks => this._tasksSubject.next(tasks),
                 error: err => this._errorMessage.set(err.message),
             }),
             finalize(() => {
@@ -38,7 +39,7 @@ export class ToDoService extends AbstractHttpService<Task, Omit<Task, 'id'>> {
     }
 
     public getTaskById(id: string): Task | null {
-        return this._tasks().find(task => task.id === id) || null;
+        return this._tasksSubject.value.find(task => task.id === id) || null;
     }
 
     public override add(task: Omit<Task, 'id' | 'status'>): Observable<Task> {
@@ -49,8 +50,8 @@ export class ToDoService extends AbstractHttpService<Task, Omit<Task, 'id'>> {
         }).pipe(
             tap({
                 next: (nTask) => {
-                    this._tasks.update((items: Task[]) => [
-                        ...items,
+                    this._tasksSubject.next([
+                        ...this._tasksSubject.value,
                         nTask,
                     ]);
                 },
@@ -61,7 +62,7 @@ export class ToDoService extends AbstractHttpService<Task, Omit<Task, 'id'>> {
     public override remove(id: string) {
         return super.remove(id).pipe(
             tap({
-                next: () => this._tasks.update(items => items.filter(item => item.id !== id)),
+                next: () => this._tasksSubject.next([...this._tasksSubject.value.filter(item => item.id !== id)]),
             }),
         );
     }
@@ -69,7 +70,9 @@ export class ToDoService extends AbstractHttpService<Task, Omit<Task, 'id'>> {
     public override update(task: Task): Observable<Task> {
         return super.update(task).pipe(
             tap({
-                next: () => this._tasks.update(items => items.map(item => item.id === task.id ? { ...task } : item)),
+                next: () => this._tasksSubject.next(
+                    [...this._tasksSubject.value.map(item => item.id === task.id ? { ...task } : item)],
+                ),
             }),
         );
     }
@@ -86,7 +89,9 @@ export class ToDoService extends AbstractHttpService<Task, Omit<Task, 'id'>> {
             toArray(),
             tap(res => {
                 const successIdsArr = res.filter(item => item.success).map(item => item.id);
-                this._tasks.update(items => items.map(item => successIdsArr.includes(item.id) ? { ...item, status } : item));
+                this._tasksSubject.next([
+                    ...this._tasksSubject.value.map(item => successIdsArr.includes(item.id) ? { ...item, status } : item),
+                ])
             }),
         );
     }
